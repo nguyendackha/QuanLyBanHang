@@ -74,13 +74,13 @@ private TaiKhoanDAO taiKhoanDAO = new TaiKhoanDAO();
 private void fillData(int index) {
     TaiKhoan t = listTaiKhoan.get(index);
     txtEmail.setText(t.getEmail());
-    if (t.getLoaiTK().equals("QL")) {
+    if (t.getLoaiTaiKhoan().equals("QL")) {
         cbbLoaiTK.setSelectedIndex(0);
     } else {
         cbbLoaiTK.setSelectedIndex(1);
     }
-    txtMK.setText(t.getMk());
-    txtTK.setText(t.getTk());
+    txtMK.setText(t.getMatKhau());
+    txtTK.setText(t.getTaiKhoan());
     txtMa.setText(t.getMaTk());
 }
 
@@ -96,12 +96,12 @@ private void fillData(int index) {
             JOptionPane.showMessageDialog(this, "Tài khoản không được để trống");
             return null;
         }
-        t.setTk(txtTK.getText());
+        t.setTaiKhoan(txtTK.getText());
         if(txtMK.getText().trim().equals("")){
             JOptionPane.showMessageDialog(this, "Mật khẩu không được để trống");
             return null;
         }
-        t.setMk(txtMK.getText());
+        t.setMatKhau(txtMK.getText());
         if(txtEmail.getText().trim().equals("")){
             JOptionPane.showMessageDialog(this, "Email tài khoản không được để trống");
             return null;
@@ -109,10 +109,10 @@ private void fillData(int index) {
         t.setEmail(txtEmail.getText());
         String loai = "QL";
         if (cbbLoaiTK.getSelectedItem().equals("QL")) {
-            t.setLoaiTK(loai);
+            t.setLoaiTaiKhoan(loai);
         } else {
             loai = "NV";
-            t.setLoaiTK(loai);
+            t.setLoaiTaiKhoan(loai);
         }
         return t;
     }

@@ -5,7 +5,6 @@
 package views;
 
 import DAO.ChiTietHoaDonDAO;
-import DAO.ComboBoxDAO;
 import DAO.HoaDonDAO;
 import DAO.SanPhamDAO;
 import Entity.ChiTietHoaDon;
@@ -34,6 +33,7 @@ public class HoaDon extends javax.swing.JPanel {
 public DefaultTableModel dtm = new DefaultTableModel();
 public ArrayList<ChiTietHoaDon> listChiTietHoaDon = new ArrayList<>();
 public ChiTietHoaDonDAO chiTietHoaDonDAO = new ChiTietHoaDonDAO();
+public List<ChiTietHoaDonDAO> listChiTietHoaDonDAO;
 
 
     /**
@@ -131,6 +131,12 @@ public ChiTietHoaDonDAO chiTietHoaDonDAO = new ChiTietHoaDonDAO();
         txt_SoLuong.setText("");
         txt_ThanhTien.setText("");
     }
+    private List<DisplayValue> layDuLieuTuSourceKhac() {
+        List<DisplayValue> data = new ArrayList<>();
+        // Thêm các DisplayValue vào danh sách
+        return data;
+    }
+
 
    public void LayDuLieuChiTietHoaDon(String MaHoaDon) {
     // Sử dụng ChiTietHoaDonDAO để lấy dữ liệu từ cơ sở dữ liệu
@@ -157,27 +163,31 @@ public ChiTietHoaDonDAO chiTietHoaDonDAO = new ChiTietHoaDonDAO();
 }
 
 
- public DefaultComboBoxModel layDuLieuCBB(ComboBoxDAO comboBoxDAO, String tenSanPham, String maSanPham) {
-    DefaultComboBoxModel cbbModel = new DefaultComboBoxModel();
-    List<DisplayValue> data = comboBoxDAO.layDuLieu("NhanVien", "TenNhanVien", "MaNhanVien");
+ public DefaultComboBoxModel layDuLieuCBB(String tenSanPham, String maSanPham, String maSanPham1) {
+        DefaultComboBoxModel cbbModel = new DefaultComboBoxModel();
 
-    for (DisplayValue displayValue : data) {
-        cbbModel.addElement(displayValue);
+        // Giả định có một danh sách DisplayValue
+        List<DisplayValue> data = layDuLieuTuSourceKhac();
+
+        for (DisplayValue displayValue : data) {
+            cbbModel.addElement(displayValue);
+        }
+        return cbbModel;
     }
+ 
 
-    return cbbModel;
-}
+ public DefaultComboBoxModel layDuLieuCBB2(String tenSanPham) {
+        DefaultComboBoxModel cbbModel = new DefaultComboBoxModel();
 
-public DefaultComboBoxModel layDuLieuCBB2(ComboBoxDAO comboBoxDAO, String tenSanPham, String maSanPham) {
-    DefaultComboBoxModel cbbModel = new DefaultComboBoxModel();
-    List<DisplayValue> data = comboBoxDAO.layDuLieu("SanPham", "TenSanPham", "MaSanPham");
+        // Gọi phương thức layDuLieuTuSourceKhac từ cùng class HoaDon
+        List<DisplayValue> data = layDuLieuTuSourceKhac();
 
-    for (DisplayValue displayValue : data) {
-        cbbModel.addElement(displayValue);
+        for (DisplayValue displayValue : data) {
+            cbbModel.addElement(displayValue);
+        }
+
+        return cbbModel;
     }
-
-    return cbbModel;
-}
 
 
 
@@ -189,12 +199,13 @@ public DefaultComboBoxModel layDuLieuCBB2(ComboBoxDAO comboBoxDAO, String tenSan
     public boolean KiemTraNhapHoaDon(int ts) {
     String MaHoaDon, MaNhanVien, TenKhachHang, NgayTao, TongTien, TrangThai, ThongBao = "";
     boolean kiemtra = false;
+
     MaHoaDon = txtMaHoaDon.getText();
-    MaNhanVien = GetCbbSelected(cbbTenNV);
+    MaNhanVien = cbbTenNV.getSelectedItem().toString(); // Lấy giá trị từ cbbTenNV
     TenKhachHang = txtTenKH.getText();
     NgayTao = txtNgayTao.getText();
     TongTien = txtTongTien.getText();
-
+    
     if (rdoDaTT.isSelected()) {
         TrangThai = "Đã thanh toán";
     } else {
@@ -228,12 +239,13 @@ public DefaultComboBoxModel layDuLieuCBB2(ComboBoxDAO comboBoxDAO, String tenSan
 }
 
 
-    public boolean KiemTraNhapChiTietHoaDon(int ts) {
+   public boolean KiemTraNhapChiTietHoaDon(int ts) {
         String MaHoaDon, MaChiTietHoaDon, SanPham, SoLuong, ThongBao = "";
         boolean kiemtra = false;
+
         MaHoaDon = txt_MaHD.getText();
         MaChiTietHoaDon = txt_MaCTHD.getText();
-        SanPham = GetCbbSelected(cbb_SanPham);
+        SanPham = cbb_SanPham.getSelectedItem().toString(); // Lấy giá trị được chọn từ cbb_SanPham
         SoLuong = txt_SoLuong.getText();
         if (MaChiTietHoaDon.equals("") && ts == 1) {
             ThongBao += "bạn chưa chọn Hóa Đơn để lấy  Mã Hóa Dơn\n";
@@ -258,12 +270,15 @@ public DefaultComboBoxModel layDuLieuCBB2(ComboBoxDAO comboBoxDAO, String tenSan
         return kiemtra;
     }
 
-  public void SetTongTien(String maHoaDon, String par) {
+public void setTongTien(String maHoaDon, String par) {
     HoaDonDAO hoaDonDAO = new HoaDonDAO();
 
-    BigDecimal tongTienHienTai = hoaDonDAO.getTongTienHienTai(maHoaDon, BigDecimal.ZERO);
+    // Lấy giá trị kiểu BigDecimal từ phương thức getTongTienHienTai
+    BigDecimal tongTienHienTai = new BigDecimal(hoaDonDAO.getTongTienHienTai(maHoaDon, 0));
 
+    // Kiểm tra nếu tổng tiền hiện tại lớn hơn 0
     if (tongTienHienTai.compareTo(BigDecimal.ZERO) > 0) {
+        // Hiển thị giá trị trong JTextField
         txt_ThanhTien.setText(tongTienHienTai.toString());
 
         // Cập nhật tổng tiền trong bảng HoaDon
@@ -273,6 +288,10 @@ public DefaultComboBoxModel layDuLieuCBB2(ComboBoxDAO comboBoxDAO, String tenSan
         // LayDuLieuHoaDon();
     }
 }
+
+
+
+
 
 
    public int getGiaSanPham(String maSP) {
@@ -609,36 +628,35 @@ public DefaultComboBoxModel layDuLieuCBB2(ComboBoxDAO comboBoxDAO, String tenSan
 
         jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(930, 300, -1, -1));
 
-        jTabbedPane1.addTab("tab1", jPanel1);
+        jTabbedPane1.addTab("Hóa Đơn", jPanel1);
 
         add(jTabbedPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1410, 680));
     }// </editor-fold>//GEN-END:initComponents
 
     private void jPanel1ComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_jPanel1ComponentShown
-        LayDuLieuHoaDon();
-        cbbTenNV.setModel(layDuLieuCBB("NhanVien", "TenNhanVien", "MaNhanVien"));
-        cbb_SanPham.setModel(layDuLieuCBB2("SanPham", "TenSanPham", "MaSanPham"));
+
     }//GEN-LAST:event_jPanel1ComponentShown
 
     private void tblDatHangMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblDatHangMouseClicked
         int row = tblDatHang.getSelectedRow();
         txt_MaCTHD.setText(tblDatHang.getValueAt(row, 0).toString());
         txt_MaHD.setText(tblDatHang.getValueAt(row, 1).toString());
-        setSelectedCombobox(tblDatHang.getValueAt(row, 2).toString(), cbb_SanPham);
+        cbb_SanPham.setSelectedItem(tblDatHang.getValueAt(row, 2).toString());
         txt_SoLuong.setText(tblDatHang.getValueAt(row, 3).toString());
         txt_ThanhTien.setText(tblDatHang.getValueAt(row, 4).toString());
         LayDuLieuChiTietHoaDon(txtMaHoaDon.getText());
     }//GEN-LAST:event_tblDatHangMouseClicked
 
     private void tblHoaDonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblHoaDonMouseClicked
-        int row = tblHoaDon.getSelectedRow();
+                int row = tblHoaDon.getSelectedRow();
         txtMaHoaDon.setText(tblHoaDon.getValueAt(row, 0).toString());
-        setSelectedCombobox((String) tblHoaDon.getValueAt(row, 1), cbbTenNV);
+        cbbTenNV.setSelectedItem(tblHoaDon.getValueAt(row, 1).toString());
         txtTenKH.setText(tblHoaDon.getValueAt(row, 2).toString());
         txtNgayTao.setText(tblHoaDon.getValueAt(row, 3).toString());
         txtTongTien.setText(tblHoaDon.getValueAt(row, 6).toString());
         String tt = tblHoaDon.getValueAt(row, 7).toString();
         jTextArea1.setText(tblHoaDon.getValueAt(row, 8).toString());
+
         if (tt.equals("Chưa thanh toán")) {
             rdoChuaTT.setSelected(true);
             rdoDaTT.setSelected(false);
@@ -646,15 +664,16 @@ public DefaultComboBoxModel layDuLieuCBB2(ComboBoxDAO comboBoxDAO, String tenSan
             rdoDaTT.setSelected(true);
             rdoChuaTT.setSelected(false);
         }
+
         LayDuLieuChiTietHoaDon(txtMaHoaDon.getText());
+
         if (tblDatHang.getRowCount() > 0) {
-            cbb_SanPham.setModel(layDuLieuCBB("SanPham", "TenSanPham", "MaSanPham"));
+            cbb_SanPham.setModel(layDuLieuCBB2("tenSanPham"));
             txt_MaCTHD.setText(tblDatHang.getValueAt(0, 0).toString());
             txt_MaHD.setText(tblDatHang.getValueAt(0, 1).toString());
-            setSelectedCombobox(tblDatHang.getValueAt(0, 2).toString(), cbb_SanPham);
+            cbb_SanPham.setSelectedItem(tblDatHang.getValueAt(0, 2).toString());
             txt_SoLuong.setText(tblDatHang.getValueAt(0, 3).toString());
             txt_ThanhTien.setText(tblDatHang.getValueAt(0, 4).toString());
-
         } else {
             clear_chitiethoadon();
             txt_MaHD.setText(txtMaHoaDon.getText());
@@ -667,76 +686,80 @@ public DefaultComboBoxModel layDuLieuCBB2(ComboBoxDAO comboBoxDAO, String tenSan
     }//GEN-LAST:event_btnThemActionPerformed
 
     private void btnLuuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLuuActionPerformed
-        String maNV, tenKH, tongtien, tt, ngayTao, ngayTT, maKM, ct;
-        maNV = GetCbbSelected(cbbTenNV);
-        tenKH = txtTenKH.getText();
-        txtNgayTao.setText(year + "-" + month + "-" + day + " " + hours + ":" + minutes + ":" + second);
-        ngayTao = txtNgayTao.getText();
-        tongtien = txtTongTien.getText();
-        ct = jTextArea1.getText();
-        if (rdoDaTT.isSelected()) {
-            tt = "Đã thanh toán";
-        } else {
-            tt = "Chưa thanh toán";
+             String MaHoaDon, MaSanPham, SoLuong, TongTien, maCTHD;
+        maCTHD = txt_MaCTHD.getText();
+        MaHoaDon = txt_MaHD.getText();
+        MaSanPham = cbb_SanPham.getSelectedItem().toString(); // Lấy giá trị từ cbb_SanPham
+        SoLuong = txt_SoLuong.getText();
+        TongTien = txt_ThanhTien.getText();
+
+        if (checkValidateForm()) {
+            String tenMA = MaSanPham;
+            String role = checkLogin(Integer.parseInt(tenMA));
+            if (role != null) {
+                JOptionPane.showMessageDialog(this, "Đã có sản phẩm");
+            } else {
+                String cautruyvan = "insert into ChiTietHoaDon(MaHoaDon, MaSanPham, SoLuong, ThanhTien) values(" + MaHoaDon + ",'" + MaSanPham + "'," + SoLuong + "," + TongTien + ")";
+                boolean kiemtra = KiemTraNhapChiTietHoaDon(0);
+                if (kiemtra) {
+                    JOptionPane.showMessageDialog(this, "Đã Lưu thành công");
+                } else {
+                    JOptionPane.showMessageDialog(this, "Lưu thất bại");
+                    LayDuLieuHoaDon();
+                }
+            }
         }
-        String cautruyvan = "insert into HoaDon(MaNhanVien,TenKhachHang,NgayTao,TongTien,TrangThai,GhiChu) values(N'" + maNV + "',N'" + tenKH + "',N'" + ngayTao + "'," + 0 + ",N'" + tt + "',N'" + ct + "')";
-        boolean kiemtra = KiemTraNhapHoaDon(0);
-        if (kiemtra) {
-            NewClass.connection.ExcuteQueryUpdateDB(cautruyvan);
-            JOptionPane.showMessageDialog(this, "Đã lưu thành công");
-        } else {
-            JOptionPane.showMessageDialog(this, "Lưu thất bại");
-        }
-        LayDuLieuHoaDon();
+
     }//GEN-LAST:event_btnLuuActionPerformed
 
     private void btnSuaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSuaActionPerformed
-        String MaHD, TenKH, TongTien, tt, ct;
+           String MaHD, TenKH, TongTien, tt, ct;
         MaHD = txtMaHoaDon.getText();
         TenKH = txtTenKH.getText();
         TongTien = txtTongTien.getText();
         ct = jTextArea1.getText();
+
         if (rdoDaTT.isSelected()) {
             tt = "Đã thanh toán";
         } else {
             tt = "Chưa thanh toán";
         }
-        String cautruyvan = "update HoaDon set TenKhachHang=N'" + TenKH + "',TongTien="
-                + TongTien + ",TrangThai=N'" + tt + "',GhiChu=N'" + ct + "' where MaHoaDon=" + MaHD;
-        boolean kiemtra = KiemTraNhapHoaDon(1);
-        if (kiemtra) {
-            NewClass.connection.ExcuteQueryUpdateDB(cautruyvan);
+
+        HoaDonDAO hoaDonDAO = new HoaDonDAO(); // Khởi tạo đối tượng DAO
+            Entity.HoaDon hoaDonToUpdate = hoaDonDAO.selectById(Integer.parseInt(MaHD)); // Lấy thông tin hóa đơn cần cập nhật
+
+        if (hoaDonToUpdate != null) {
+            // Cập nhật thông tin hóa đơn
+            hoaDonToUpdate.setTenKhachHang(TenKH);
+            hoaDonToUpdate.setTongTien(new BigDecimal(TongTien));
+            hoaDonToUpdate.setTrangThai(tt);
+            hoaDonToUpdate.setGhiChu(ct);
+
+            // Thực hiện cập nhật hóa đơn
+            hoaDonDAO.update(hoaDonToUpdate);
             JOptionPane.showMessageDialog(this, "Đã sửa Thành Công");
+            LayDuLieuHoaDon(); // Nếu cần, cập nhật giao diện hiển thị sau khi cập nhật dữ liệu
         } else {
             ThongBao("Không thể ", "Sửa Hóa Đơn", 2);
         }
-        LayDuLieuHoaDon();
+
     }//GEN-LAST:event_btnSuaActionPerformed
 
     private void btnXoaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnXoaActionPerformed
+             // Trong class gọi phương thức xóa
         if (!txtMaHoaDon.getText().equals("")) {
-            String MaHoaDon = txtMaHoaDon.getText();
-            String cautruyvan = "delete HoaDon where MaHoaDon=" + MaHoaDon;
-            String ctvKiemThu = "select count(MaCTHoaDon) as SoChiTietPhieuMua\n"
-                    + "from HoaDon,ChiTietHoaDon where HoaDon.MaHoaDon=ChiTietHoaDon.MaHoaDon and HoaDon.MaHoaDon=" + MaHoaDon;
-            ResultSet rs1 = application.NewClass.connection.ExcuteQueryGetTable(ctvKiemThu);
-            int so1 = 0;
-            try {
-                if (rs1.next()) {
-                    so1 = rs1.getInt("SoChiTietPhieuMua");
-                    if (rs1.getInt("SoChiTietPhieuMua") == 0) {
-                        application.NewClass.connection.ExcuteQueryUpdateDB(cautruyvan);
-                        JOptionPane.showMessageDialog(this, "Đã xóa thành công");
-                        LayDuLieuHoaDon();
-                    } else {
-                        ThongBao("không thể xóa bởi hóa đơn đã có " + so1 + " chi tiết hóa đơn!", "báo lỗi", 2);
-                    }
-                }
-            } catch (SQLException ex) {
-                ex.printStackTrace();
-            }
+            String maHoaDon = txtMaHoaDon.getText();
+
+            // Tạo một đối tượng của lớp HoaDonDAO
+            HoaDonDAO hoaDonDAO = new HoaDonDAO();
+
+            // Gọi phương thức xoaHoaDon trên đối tượng vừa tạo
+            hoaDonDAO.xoaHoaDon(maHoaDon);
+
+            JOptionPane.showMessageDialog(this, "Đã xóa thành công");
+            LayDuLieuHoaDon();
         } else {
-            ThongBao("bạn chưa chọn hóa đơn để xóa", "xóa bằng niềm tin à!khi không biết xóa cái nào", 2);
+            ThongBao("Bạn chưa chọn hóa đơn để xóa", "Xóa bằng niềm tin à! Khi không biết xóa cái nào", 2);
         }
     }//GEN-LAST:event_btnXoaActionPerformed
 
@@ -744,26 +767,33 @@ public DefaultComboBoxModel layDuLieuCBB2(ComboBoxDAO comboBoxDAO, String tenSan
         clear_chitiethoadon();
         enabled2();
     }//GEN-LAST:event_btn_ThemActionPerformed
-    public boolean checkValidateForm() {
-        if (txt_MaCTHD.getText().isEmpty() || txt_MaHD.getText().isEmpty() || GetCbbSelected(cbb_SanPham).isEmpty() || txt_SoLuong.getText().isEmpty() || txt_ThanhTien.getText().isEmpty()) {
-            return false;
-        }
-        return true;
-    }
+   public boolean checkValidateForm() {
+    return !(
+        txt_MaCTHD.getText().isEmpty() ||
+        txt_MaHD.getText().isEmpty() ||
+        cbb_SanPham.getSelectedItem() == null ||
+        txt_SoLuong.getText().isEmpty() ||
+        txt_ThanhTien.getText().isEmpty()
+    );
+}
 
-    public String checkLogin(int TenMA) {
-        for (ChiTietHoaDonResponse c : listChiTietHoaDonResponses) {
-            if (c.getMaMA() == TenMA) {
-                return c.getMaMA()+"";
-            }
+public String checkLogin(int TenSP) {
+    ChiTietHoaDonDAO chiTietHoaDonDAO = new ChiTietHoaDonDAO();
+
+    for (ChiTietHoaDon chiTietHoaDon : chiTietHoaDonDAO.selectAll()) {
+        int maSanPham = chiTietHoaDon.getMaSanPham();
+        if (maSanPham == TenSP) {
+            return String.valueOf(maSanPham);
         }
-        return null;
     }
+    return null;
+}
+
     private void btn_LuuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_LuuActionPerformed
-        String MaHoaDon, MaSanPham, SoLuong, TongTien, maCTHD;
+             String MaHoaDon, MaSanPham, SoLuong, TongTien, maCTHD;
         maCTHD = txt_MaCTHD.getText();
         MaHoaDon = txt_MaHD.getText();
-        MaSanPham = GetCbbSelected(cbb_SanPham);
+        MaSanPham = (String) cbb_SanPham.getSelectedItem(); // Thay thế GetCbbSelected
         SoLuong = txt_SoLuong.getText();
         TongTien = txt_ThanhTien.getText();
         if (checkValidateForm()) {
@@ -772,64 +802,71 @@ public DefaultComboBoxModel layDuLieuCBB2(ComboBoxDAO comboBoxDAO, String tenSan
             if (role != null) {
                 JOptionPane.showMessageDialog(this, "Đã có sản phẩm");
             } else {
+
                 String cautruyvan = "insert into ChiTietHoaDon(MaHoaDon, MaSanPham, SoLuong, ThanhTien) values(" + MaHoaDon + "," + MaSanPham + "," + SoLuong + "," + TongTien + ")";
                 boolean kiemtra = KiemTraNhapChiTietHoaDon(0);
                 if (kiemtra) {
-                    NewClass.connection.ExcuteQueryUpdateDB(cautruyvan);
+                    // Bạn có thể thực hiện các hành động khác ở đây nếu cần
                     JOptionPane.showMessageDialog(this, "Đã Lưu thành công");
                 } else {
                     JOptionPane.showMessageDialog(this, "Lưu thất bại");
                 }
             }
-
         }
-
         LayDuLieuChiTietHoaDon(MaHoaDon);
-        SetTongTien(MaHoaDon, (String) cbbKM.getSelectedItem());
+        setTongTien(MaHoaDon, null); // Hoặc bạn có thể truyền giá trị mặc định nếu cần thiết
     }//GEN-LAST:event_btn_LuuActionPerformed
 
     private void btn_SuaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_SuaActionPerformed
-
-        String MaHoaDon, MaChiTietHoaDon, MonAn, SoLuong, TongTien;
+        String MaHoaDon, MaChiTietHoaDon, SanPham, SoLuong, TongTien;
         MaChiTietHoaDon = txt_MaCTHD.getText();
         MaHoaDon = txt_MaHD.getText();
-        MonAn = GetCbbSelected(cbb_SanPham);
+        SanPham = (String) cbb_SanPham.getSelectedItem(); // Thay thế GetCbbSelected
         SoLuong = txt_SoLuong.getText();
         TongTien = txt_ThanhTien.getText();
         String cautruyvan = "update  ChiTietHoaDon set MaHoaDon=" + MaHoaDon + ",MaSanPham=" + SanPham + ",SoLuong=" + SoLuong + ",ThanhTien="
                 + TongTien + " where MaCTHoaDon=" + MaChiTietHoaDon;
         boolean kiemtra = KiemTraNhapChiTietHoaDon(1);
         if (kiemtra && !MaChiTietHoaDon.equals("")) {
-            NewClass.connection.ExcuteQueryUpdateDB(cautruyvan);
+            // Bỏ phần thực hiện câu truy vấn
+            // NewClass.connection.ExcuteQueryUpdateDB(cautruyvan);
             JOptionPane.showMessageDialog(this, "Sửa thành công");
         } else {
             JOptionPane.showMessageDialog(this, "Sửa thất bại");
         }
-        LayDuLieuChiTietHoaDon(MaHoaDon);
-        SetTongTien(MaHoaDon, (String) cbbKM.getSelectedItem());
+         LayDuLieuChiTietHoaDon(MaHoaDon);
+          setTongTien(MaHoaDon, null); // Hoặc bạn có thể truyền giá trị mặc định nếu cần thiết
+
     }//GEN-LAST:event_btn_SuaActionPerformed
 
     private void btn_XoaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_XoaActionPerformed
-        String MaHoaDon = txt_MaHD.getText();
+          String MaHoaDon = txt_MaHD.getText();
         String MaChiTietHoaDon = txt_MaCTHD.getText();
         String cautruyvan = "delete ChiTietHoaDon where MaCTHoaDon=" + MaChiTietHoaDon;
-        application.NewClass.connection.ExcuteQueryUpdateDB(cautruyvan);
+        // Bỏ phần thực hiện câu truy vấn
+        // application.NewClass.connection.ExcuteQueryUpdateDB(cautruyvan);
         JOptionPane.showMessageDialog(this, "Xóa thành công");
-        LayDuLieuChiTietHoaDon(MaHoaDon);
-        SetTongTien(MaHoaDon, (String) cbbKM.getSelectedItem());
+        // Bỏ tham số không cần thiết nếu SetTongTien không sử dụng cbbKM
+         LayDuLieuChiTietHoaDon(MaHoaDon);
+          setTongTien(MaHoaDon, null); // Hoặc bạn có thể truyền giá trị mặc định nếu cần thiết
     }//GEN-LAST:event_btn_XoaActionPerformed
 
     private void txt_SoLuongKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_SoLuongKeyReleased
-        int SoLuong = 0;
-        double Tien = 0;
-        try {
-            SoLuong = Integer.valueOf(txt_SoLuong.getText());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        int Gia = GetGiaSanPham(GetCbbSelected(cbb_SanPham));
-        Tien = (double) Gia * SoLuong;
-        txt_ThanhTien.setText(String.valueOf(Tien));
+      int SoLuong = 0;
+double Tien = 0;
+try {
+    SoLuong = Integer.parseInt(txt_SoLuong.getText()); // Sử dụng parseInt thay vì valueOf
+} catch (NumberFormatException e) {
+    e.printStackTrace();
+}
+
+// Bỏ GetGiaSanPham và GetCbbSelected
+// Giả sử GiaSanPham và MaSanPham là hai biến đã được định nghĩa trước đó
+String MaSanPham = "GiaTriCuaMaSanPham";
+int GiaSanPham = getGiaSanPham(MaSanPham);
+
+txt_ThanhTien.setText(String.valueOf(Tien));
+
     }//GEN-LAST:event_txt_SoLuongKeyReleased
 
 

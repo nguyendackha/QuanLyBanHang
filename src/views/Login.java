@@ -70,9 +70,9 @@ public class Login extends javax.swing.JFrame {
     // Duyệt qua danh sách các đối tượng TaiKhoan trong listTaiKhoanDAO
     for (TaiKhoan taiKhoan : listTaiKhoanDAO) {
         // Kiểm tra xem thông tin đăng nhập có khớp không
-        if (taiKhoan.getTk().equals(username) && taiKhoan.getMk().equals(password)) {
+        if (taiKhoan.getTaiKhoan().equals(username) && taiKhoan.getMatKhau().equals(password)) {
             // Nếu khớp, trả về loại tài khoản (LoaiTK)
-            return taiKhoan.getLoaiTK();
+            return taiKhoan.getLoaiTaiKhoan();
         }
     }
     // Nếu không có khớp nào, trả về null
@@ -127,6 +127,11 @@ public class Login extends javax.swing.JFrame {
         btnDangNhap.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 btnDangNhapMouseClicked(evt);
+            }
+        });
+        btnDangNhap.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDangNhapActionPerformed(evt);
             }
         });
 
@@ -300,6 +305,10 @@ public class Login extends javax.swing.JFrame {
         System.out.println("Hello");
         this.dispose();
     }//GEN-LAST:event_btnDoiMkActionPerformed
+
+    private void btnDangNhapActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDangNhapActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnDangNhapActionPerformed
 
     /**
      * @param args the command line arguments

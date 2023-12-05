@@ -1,26 +1,25 @@
-
 package Entity;
-
-
 
 import java.util.Vector;
 
 public class TaiKhoan {
     private String maTk;
-    private String tk;
-    private String mk;
-    private String email;
-    private String loaiTK;
+    private String TaiKhoan;
+    private String MatKhau;
+    private String Email;
+    private String LoaiTaiKhoan;
 
+    // Constructor không tham số
     public TaiKhoan() {
+        // Khởi tạo một số giá trị mặc định nếu cần
     }
 
-    public TaiKhoan(String maNV, String tk, String mk, String email, String loaiTK) {
+    public TaiKhoan(String maTk, String TaiKhoan, String MatKhau, String Email, String LoaiTaiKhoan) {
         this.maTk = maTk;
-        this.tk = tk;
-        this.mk = mk;
-        this.email = email;
-        this.loaiTK = loaiTK;
+        this.TaiKhoan = TaiKhoan;
+        this.MatKhau = MatKhau;
+        this.Email = Email;
+        this.LoaiTaiKhoan = LoaiTaiKhoan;
     }
 
     public String getMaTk() {
@@ -31,48 +30,45 @@ public class TaiKhoan {
         this.maTk = maTk;
     }
 
-    public String getTk() {
-        return tk;
+    public String getTaiKhoan() {
+        return TaiKhoan;
     }
 
-    public void setTk(String tk) {
-        this.tk = tk;
+    public void setTaiKhoan(String TaiKhoan) {
+        this.TaiKhoan = TaiKhoan;
     }
 
-    public String getMk() {
-        return mk;
+    public String getMatKhau() {
+        return MatKhau;
     }
 
-    public void setMk(String mk) {
-        this.mk = mk;
+    public void setMatKhau(String MatKhau) {
+        this.MatKhau = MatKhau;
     }
 
     public String getEmail() {
-        return email;
+        return Email;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setEmail(String Email) {
+        this.Email = Email;
     }
 
-    public String getLoaiTK() {
-        return loaiTK;
+    public String getLoaiTaiKhoan() {
+        return LoaiTaiKhoan;
     }
 
-    public void setLoaiTK(String loaiTK) {
-        this.loaiTK = loaiTK;
+    public void setLoaiTaiKhoan(String LoaiTaiKhoan) {
+        this.LoaiTaiKhoan = LoaiTaiKhoan;
     }
 
-    // Các phương thức getter và setter đã có
-
-    // Phương thức chuyển đổi thành Vector<Object>
     public Vector<Object> toDataRow() {
         Vector<Object> row = new Vector<>();
         row.add(maTk);
-        row.add(tk);
-        row.add(mk);
-        row.add(email);
-        row.add(loaiTK);
+        row.add(TaiKhoan);
+        row.add(MatKhau);
+        row.add(Email);
+        row.add(LoaiTaiKhoan);
         return row;
     }
 }

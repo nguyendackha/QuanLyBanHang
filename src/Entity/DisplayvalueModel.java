@@ -1,5 +1,7 @@
     package Entity;
 
+import java.util.ArrayList;
+import java.util.List;
     import javax.swing.JComboBox;
 
 public class DisplayvalueModel {
@@ -29,6 +31,11 @@ public class DisplayvalueModel {
 
     public DisplayValue createDisplayValue(String displayMember, Object displayValue) {
         return new DisplayValue(displayMember, displayValue);
+    }
+    private List<DisplayValue> layDuLieuTuSourceKhac() {
+        List<DisplayValue> data = new ArrayList<>();
+        // Thêm các DisplayValue vào danh sách
+        return data;
     }
 
     public void setSelectedCombobox(String cbbselected, JComboBox cbb) {

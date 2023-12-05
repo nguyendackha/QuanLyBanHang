@@ -17,7 +17,17 @@ public class HoaDon {
     private String TrangThai;
     private String TenNhanVien;
     private String GhiChu; 
-     private String MaKhuyenMai;
+    private String MaKhuyenMai;
+    private String MaSanPham;
+
+    public String getMaSanPham() {
+        return MaSanPham;
+    }
+
+    public void setMaSanPham(String MaSanPham) {
+        this.MaSanPham = MaSanPham;
+    }
+    
 
     public HoaDon(String MaKhuyenMai) {
         this.MaKhuyenMai = MaKhuyenMai;

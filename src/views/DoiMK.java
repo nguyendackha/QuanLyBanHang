@@ -46,8 +46,8 @@ PreparedStatement ps = null;
 
     public String checkLogin(String username, String password) {
     for (TaiKhoan u : listTaiKhoan) {
-        if (u.getTk().equals(username) && u.getMk().equals(password)) {
-            return u.getLoaiTK();
+        if (u.getTaiKhoan().equals(username) && u.getMatKhau().equals(password)) {
+            return u.getLoaiTaiKhoan();
         }
     }
     return null;

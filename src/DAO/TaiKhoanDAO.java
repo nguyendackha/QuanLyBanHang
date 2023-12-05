@@ -23,19 +23,19 @@ public class TaiKhoanDAO extends ManagerDAO<TaiKhoan, String> {
     public void insert(TaiKhoan entity) {
         XJdbc.executeUpdate(INSERT_SQL,
                 entity.getMaTk(),
-                entity.getTk(),
-                entity.getMk(),
+                entity.getTaiKhoan(),
+                entity.getMatKhau(),
                 entity.getEmail(),
-                entity.getLoaiTK());
+                entity.getLoaiTaiKhoan());
     }
 
     @Override
     public void update(TaiKhoan entity) {
         XJdbc.executeUpdate(UPDATE_SQL,
-                entity.getTk(),
-                entity.getMk(),
+                entity.getTaiKhoan(),
+                entity.getMatKhau(),
                 entity.getEmail(),
-                entity.getLoaiTK(),
+                entity.getLoaiTaiKhoan(),
                 entity.getMaTk());
     }
 

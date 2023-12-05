@@ -2,7 +2,6 @@ package DAO;
 
 import Entity.ChiTietHoaDon;
 import Helper.XJdbc;
-
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -55,10 +54,21 @@ public class ChiTietHoaDonDAO extends ManagerDAO<ChiTietHoaDon, Integer> {
     public List<ChiTietHoaDon> selectAll() {
         return this.selectBySQL(SELECT_ALL_SQL);
     }
+    
 
     public List<ChiTietHoaDon> selectByMaHoaDon(int maHoaDon) {
         return this.selectBySQL(SELECT_BY_MAHOADON_SQL, maHoaDon);
     }
+    public int getMaSanPhamByMaCTHoaDon(int maCTHoaDon) {
+        ChiTietHoaDon chiTietHoaDon = selectById(maCTHoaDon);
+        if (chiTietHoaDon != null) {
+            return chiTietHoaDon.getMaSanPham();
+        }
+        return -1; // hoặc giá trị khác để biểu thị rằng không tìm thấy
+    }
+    
+
+    
 
     @Override
     protected List<ChiTietHoaDon> selectBySQL(String sql, Object... args) {

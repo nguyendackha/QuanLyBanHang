@@ -104,24 +104,22 @@ public class ThanhToan extends javax.swing.JPanel {
     }
 }
 
-
-   public void setTongTien(String maHoaDon, String maKhuyenMai) {
+public void setTongTien(String maHoaDon, String maKhuyenMai) {
     // Lấy giá trị TienGiam từ KhuyenMaiDAO
     KhuyenMaiDAO khuyenMaiDAO = new KhuyenMaiDAO();
-     BigDecimal tienGiam = khuyenMaiDAO.getTienGiam("your_ma_khuyen_mai");
-     System.out.println("Tiền giảm: " + tienGiam);
+    BigDecimal tienGiam = khuyenMaiDAO.getTienGiam("your_ma_khuyen_mai");
+    System.out.println("Tiền giảm: " + tienGiam);
 
     // Tính toán giá trị mới cho TongTien
-    BigDecimal tongTienHienTai = new BigDecimal(0);
-    
+    BigDecimal tongTienHienTai = BigDecimal.ZERO;
+
     // Lấy giá trị TongTien - TienGiam từ HoaDonDAO
     HoaDonDAO hoaDonDAO = new HoaDonDAO();
-    tongTienHienTai = hoaDonDAO.getTongTienHienTai(maHoaDon, tienGiam);
-    // Cập nhật giá trị mới cho TongTien trong HoaDonDAO
-    hoaDonDAO.updateTongTien(maHoaDon, tongTienHienTai);
+ 
     // Lấy lại dữ liệu HoaDon
     LayDuLieuHoaDon();
 }
+
 
 private void setCBB(String maKM) {
     KhuyenMaiDAO khuyenMaiDAO = new KhuyenMaiDAO();
@@ -420,7 +418,7 @@ private void setCBB(String maKM) {
 
     // Tạo một đối tượng HoaDon và gọi phương thức SetTongTien
     HoaDon hoaDon = new HoaDon();
-    hoaDon.SetTongTien(txtMaHD.getText(), (String) cbbKM.getSelectedItem());
+    hoaDon.setTongTien(txtMaHD.getText(), (String) cbbKM.getSelectedItem());
 
     LayDuLieuHoaDon();
     clear();

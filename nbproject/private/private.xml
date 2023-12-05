@@ -3,10 +3,14 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/khazi/Desktop/ASM%20DU1/ASM%20DU1/src/Entity/HoaDon.java</file>
+            <file>file:/C:/Users/khazi/Desktop/ASM%20DU1/ASM%20DU1/src/Helper/XJdbc.java</file>
+            <file>file:/C:/Users/khazi/Desktop/ASM%20DU1/ASM%20DU1/src/views/QLNV.java</file>
+            <file>file:/C:/Users/khazi/Desktop/ASM%20DU1/ASM%20DU1/src/DAO/TaiKhoanDAO.java</file>
             <file>file:/C:/Users/khazi/Desktop/ASM%20DU1/ASM%20DU1/src/views/HoaDon.java</file>
-            <file>file:/C:/Users/khazi/Desktop/ASM%20DU1/ASM%20DU1/src/DAO/HoaDonDAO.java</file>
-            <file>file:/C:/Users/khazi/Desktop/ASM%20DU1/ASM%20DU1/src/DAO/ComboBoxDAO.java</file>
+            <file>file:/C:/Users/khazi/Desktop/ASM%20DU1/ASM%20DU1/src/Entity/TaiKhoan.java</file>
+            <file>file:/C:/Users/khazi/Desktop/ASM%20DU1/ASM%20DU1/src/views/QLNhanVien.java</file>
+            <file>file:/C:/Users/khazi/Desktop/ASM%20DU1/ASM%20DU1/src/views/Login.java</file>
+            <file>file:/C:/Users/khazi/Desktop/ASM%20DU1/ASM%20DU1/src/DAO/NhanVienDAO.java</file>
         </group>
     </open-files>
 </project-private>

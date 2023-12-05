@@ -15,6 +15,7 @@ public class HoaDonDAO extends ManagerDAO<HoaDon, Integer> {
     private final String UPDATE_SQL = "UPDATE HoaDon SET MaNhanVien=?, TenKhachHang=?, NgayTao=?, NgayThanhToan=?, TongTien=?, TrangThai=? WHERE MaHoaDon=?";
     private final String DELETE_SQL = "DELETE FROM HoaDon WHERE MaHoaDon=?";
     private final String SELECT_ALL_SQL = "SELECT * FROM HoaDon";
+    private final String XOA_HOA_DON_SQL = "DELETE FROM HoaDon WHERE MaHoaDon=?";
     private final String SELECT_BY_ID_SQL = "SELECT * FROM HoaDon WHERE MaHoaDon=?";
     private final String SELECT_CHUA_THANH_TOAN_SQL = "SELECT MaHoaDon, TenNhanVien, TenKhachHang, NgayTao, NgayThanhToan, MaKhuyenMai, TongTien, TrangThai, GhiChu FROM HoaDon WHERE TrangThai = N'Chưa thanh toán'";
     private final String UPDATE_HOADON_SQL = "UPDATE HoaDon SET MaKhuyenMai=?, TrangThai=?, NgayThanhToan=?, Ngay=? WHERE MaHoaDon=?";
@@ -75,6 +76,9 @@ public class HoaDonDAO extends ManagerDAO<HoaDon, Integer> {
     public void updateHoaDon(String maHoaDon, String maKhuyenMai, String trangThai, String ngayThanhToan, String ngay) {
         XJdbc.executeUpdate(UPDATE_HOADON_SQL, maKhuyenMai, trangThai, ngayThanhToan, ngay, maHoaDon);
     }
+    public void xoaHoaDon(String maHoaDon) {
+        XJdbc.executeUpdate(XOA_HOA_DON_SQL, maHoaDon);
+    }
 
     public List<HoaDon> layDuLieuHoaDonDaThanhToan() {
         return this.selectBySQL("SELECT * FROM HoaDon WHERE TrangThai = N'Đã thanh toán'");
@@ -104,16 +108,16 @@ public class HoaDonDAO extends ManagerDAO<HoaDon, Integer> {
         return 0; // Trả về 0 nếu không có dữ liệu
     }
 
-    public BigDecimal getTongTienHienTai(String maHoaDon, BigDecimal tienGiam) {
+    public int getTongTienHienTai(String maHoaDon, int tienGiam) {
         ResultSet rs = XJdbc.executeQuery(GET_TONG_TIEN_HIEN_TAI_SQL, tienGiam, maHoaDon);
         try {
             if (rs.next()) {
-                return rs.getBigDecimal("TongTienHienTai");
+                return rs.getInt("TongTienHienTai");
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return BigDecimal.ZERO;
+        return 0;
     }
 
     public void updateTongTien(String maHoaDon, BigDecimal tongTienHienTai) {
