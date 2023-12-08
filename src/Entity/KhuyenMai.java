@@ -1,26 +1,24 @@
 package Entity;
 
-import java.math.BigDecimal;
-
 public class KhuyenMai {
-    private int MaKhuyenMai;
+    private String MaKhuyenMai;
     private String TenSuKien;
     private int TienGiam;
 
     public KhuyenMai() {
     }
 
-    public KhuyenMai(int MaKhuyenMai, String TenSuKien, int TienGiam) {
+    public KhuyenMai(String MaKhuyenMai, String TenSuKien, int TienGiam) {
         this.MaKhuyenMai = MaKhuyenMai;
         this.TenSuKien = TenSuKien;
         this.TienGiam = TienGiam;
     }
 
-    public int getMaKhuyenMai() {
+    public String getMaKhuyenMai() {
         return MaKhuyenMai;
     }
 
-    public void setMaKhuyenMai(int MaKhuyenMai) {
+    public void setMaKhuyenMai(String MaKhuyenMai) {
         this.MaKhuyenMai = MaKhuyenMai;
     }
 

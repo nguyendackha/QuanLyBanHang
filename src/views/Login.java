@@ -59,24 +59,39 @@ public class Login extends javax.swing.JFrame {
         }
     }
 
+  
+    // Kiểm tra tính hợp lệ của các trường dữ liệu trong form.
+
+     //return true nếu các trường dữ liệu hợp lệ, ngược lại trả về false.
+
     public boolean checkValidateForm() {
+        // Kiểm tra xem trường tên người dùng có rỗng không
+        // hoặc trường mật khẩu có rỗng không.
         if (txtUserName.getText().isEmpty() || txtPassword.getText().isEmpty()) {
+            // Trả về false nếu một trong hai trường trên là rỗng.
             return false;
         }
+        // Trả về true nếu cả hai trường đều có dữ liệu.
         return true;
     }
+    public boolean checkUserRole(String username, String password) {
+        // Thực hiện kiểm tra và trả về kết quả dựa trên thông tin đăng nhập
+        // (ví dụ: có thể kiểm tra thông tin từ CSDL hoặc nơi khác)
+        // Trong trường hợp này, chỉ là một ví dụ đơn giản
+        return username.equals("admin") && password.equals("admin");
+    }
 
-   public String checkLogin(String username, String password) {
+   public boolean checkLogin(String username, String password) {
     // Duyệt qua danh sách các đối tượng TaiKhoan trong listTaiKhoanDAO
     for (TaiKhoan taiKhoan : listTaiKhoanDAO) {
         // Kiểm tra xem thông tin đăng nhập có khớp không
         if (taiKhoan.getTaiKhoan().equals(username) && taiKhoan.getMatKhau().equals(password)) {
-            // Nếu khớp, trả về loại tài khoản (LoaiTK)
-            return taiKhoan.getLoaiTaiKhoan();
+            // Nếu khớp, trả về true
+            return true;
         }
     }
-    // Nếu không có khớp nào, trả về null
-    return null;
+    // Nếu không có khớp nào, trả về false
+    return false;
 }
 
 
@@ -242,48 +257,70 @@ public class Login extends javax.swing.JFrame {
 
 
     private void btnDangNhapMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnDangNhapMouseClicked
-        String luumk = "", luutdn = "";
+    // Lưu tên đăng nhập và mật khẩu nếu ô "Nhớ mật khẩu" được chọn.
+    String luumk = "", luutdn = "";
+    if (chkbNhoMatKhau.isSelected()) {
+        luutdn = txtUserName.getText();
+        luumk = txtPassword.getText();
+    } else {
+        // Nếu ô "Nhớ mật khẩu" không được chọn, đặt giá trị lưu tên đăng nhập và mật khẩu là rỗng.
+        luutdn = "";
+        luumk = "";
+    }
+
+    try {
+        // Tạo hoặc kiểm tra sự tồn tại của tệp lưu mật khẩu.
+        File file = new File("luumk.txt");
+        if (!file.exists()) {
+            file.createNewFile();
+        }
+
+        // Ghi dữ liệu tên đăng nhập và mật khẩu vào tệp lưu mật khẩu.
+        FileWriter fw = new FileWriter(file.getAbsoluteFile());
+        BufferedWriter bw = new BufferedWriter(fw);
+        bw.write(luutdn + "\n" + luumk);
+        bw.close();
+
+        // Thông báo nếu ô "Nhớ mật khẩu" được chọn (có thể thêm xử lý khác nếu cần).
         if (chkbNhoMatKhau.isSelected()) {
-            luutdn = txtUserName.getText();
-            luumk = txtPassword.getText();
+            // TODO: Xử lý khi ô "Nhớ mật khẩu" được chọn (nếu có).
+        }
+    } catch (IOException e) {
+        // In ra thông báo lỗi nếu có vấn đề khi ghi dữ liệu vào tệp.
+        e.printStackTrace();
+    }
+
+    // Kiểm tra tính hợp lệ của form đăng nhập.
+   if (checkValidateForm()) {
+    // Lấy thông tin từ các trường đăng nhập.
+    String username = txtUserName.getText();
+    String password = new String(txtPassword.getPassword());
+
+    // Kiểm tra đăng nhập và lấy vai trò (role) của người dùng.
+    boolean loginSuccess = checkLogin(username, password);
+
+    if (loginSuccess) {
+        // Hiển thị thông báo đăng nhập thành công và mở cửa sổ tương ứng với vai trò.
+        JOptionPane.showMessageDialog(this, "Đăng nhập thành công");
+        if (checkUserRole(username, password)) {
+            QLQuanLy QL = new QLQuanLy(username);
+            QL.setVisible(true);
         } else {
-            luutdn = "";
-            luumk = "";
+            QLNhanVien nv = new QLNhanVien(username);
+            nv.setVisible(true);
         }
-        try {
-            File file = new File("luumk.txt");
-            if (!file.exists()) {
-                file.createNewFile();
-            }
-            FileWriter fw = new FileWriter(file.getAbsoluteFile());
-            BufferedWriter bw = new BufferedWriter(fw);
-            bw.write(luutdn + "\n" + luumk);
-            bw.close();
-            if (chkbNhoMatKhau.isSelected()) {
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        if (checkValidateForm()) {
-            String username = txtUserName.getText();
-            String password = new String(txtPassword.getPassword());
-            String role = checkLogin(username, password);
-            if (role != null) {
-                JOptionPane.showMessageDialog(this, "Login Succesfully");
-                if (role.equalsIgnoreCase("NV")) {
-                    QLNhanVien nv = new QLNhanVien(txtUserName.getText());
-                    nv.setVisible(true);
-                } else if (role.equalsIgnoreCase("QL")) {
-                    QLQuanLy QL = new QLQuanLy(txtUserName.getText());
-                    QL.setVisible(true);
-                }
-                this.dispose();
-            } else {
-                JOptionPane.showMessageDialog(this, "Login Failed");
-            }
-        } else {
-            JOptionPane.showMessageDialog(this, "Bạn chưa nhập tên đăng nhập hoặc mật khẩu");
-        }
+        // Đóng cửa sổ đăng nhập.
+        this.dispose();
+    } else {
+        // Hiển thị thông báo đăng nhập thất bại.
+        JOptionPane.showMessageDialog(this, "Đăng nhập thất bại");
+    }
+} else {
+    // Hiển thị thông báo nếu form đăng nhập không hợp lệ.
+    JOptionPane.showMessageDialog(this, "Bạn chưa nhập tên đăng nhập hoặc mật khẩu");
+}
+
+
     }//GEN-LAST:event_btnDangNhapMouseClicked
 
     private void btnThoatMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnThoatMouseClicked

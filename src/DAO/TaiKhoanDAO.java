@@ -6,11 +6,13 @@ import Helper.XJdbc;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Vector;
 
-public class TaiKhoanDAO extends ManagerDAO<TaiKhoan, String> { 
-    private static final String INSERT_SQL = "INSERT INTO TaiKhoan(MaTk, TaiKhoan, MatKhau, Email, LoaiTaiKhoan) VALUES(?,?,?,?,?)";
+public class TaiKhoanDAO extends ManagerDAO<TaiKhoan, Integer> {
+
+    private static final String INSERT_SQL = "INSERT INTO TaiKhoan(TaiKhoan, MatKhau, Email, LoaiTaiKhoan) VALUES(?,?,?,?)";
     private static final String UPDATE_SQL = "UPDATE TaiKhoan SET TaiKhoan=?, MatKhau=?, Email=?, LoaiTaiKhoan=? WHERE MaTk=?";
     private static final String DELETE_SQL = "DELETE FROM TaiKhoan WHERE MaTk=?";
     private static final String SELECT_ALL_SQL = "SELECT * FROM TaiKhoan";
@@ -22,11 +24,10 @@ public class TaiKhoanDAO extends ManagerDAO<TaiKhoan, String> {
     @Override
     public void insert(TaiKhoan entity) {
         XJdbc.executeUpdate(INSERT_SQL,
-                entity.getMaTk(),
                 entity.getTaiKhoan(),
                 entity.getMatKhau(),
                 entity.getEmail(),
-                entity.getLoaiTaiKhoan());
+                entity.isLoaiTaiKhoan());
     }
 
     @Override
@@ -35,17 +36,17 @@ public class TaiKhoanDAO extends ManagerDAO<TaiKhoan, String> {
                 entity.getTaiKhoan(),
                 entity.getMatKhau(),
                 entity.getEmail(),
-                entity.getLoaiTaiKhoan(),
+                entity.isLoaiTaiKhoan(),
                 entity.getMaTk());
     }
 
     @Override
-    public void delete(String id) {
+    public void delete(Integer id) {
         XJdbc.executeUpdate(DELETE_SQL, id);
     }
 
     @Override
-    public TaiKhoan selectById(String id) {
+    public TaiKhoan selectById(Integer id) {
         List<TaiKhoan> list = this.selectBySQL(SELECT_BY_ID_SQL, id);
         if (list.isEmpty()) {
             return null;
@@ -55,8 +56,7 @@ public class TaiKhoanDAO extends ManagerDAO<TaiKhoan, String> {
 
     @Override
     public List<TaiKhoan> selectAll() {
-        String selectAllQuery = "SELECT * FROM TaiKhoan";
-        return selectBySQL(selectAllQuery);
+        return this.selectBySQL(SELECT_ALL_SQL);
     }
 
     public static List<TaiKhoan> getAll() {
@@ -71,21 +71,19 @@ public class TaiKhoanDAO extends ManagerDAO<TaiKhoan, String> {
             ResultSet rs = XJdbc.executeQuery(sql, args);
             while (rs.next()) {
                 TaiKhoan entity = new TaiKhoan(
-                        rs.getString("MaTk"),
+                        rs.getInt("MaTk"),
                         rs.getString("TaiKhoan"),
                         rs.getString("MatKhau"),
                         rs.getString("Email"),
-                        rs.getString("LoaiTaiKhoan"));
+                        rs.getBoolean("LoaiTaiKhoan"));
                 list.add(entity);
             }
-//            rs.getStatement().getConnection().close();
             return list;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
-    // Phương thức mới để lấy tên nhân viên từ tài khoản
     public String getTenNhanVienByTaiKhoan(String taiKhoan) {
         try {
             ResultSet rs = XJdbc.executeQuery(SELECT_TEN_NHANVIEN_BY_TK, taiKhoan);
@@ -98,14 +96,14 @@ public class TaiKhoanDAO extends ManagerDAO<TaiKhoan, String> {
         return null;
     }
 
-    // Phương thức chuyển đổi danh sách thành Vector<Vector<Object>>
-    public Vector<Vector<Object>> toDataVector(List<TaiKhoan> list) {
-        Vector<Vector<Object>> dataVector = new Vector<>();
-        for (TaiKhoan taiKhoan : list) {
-            dataVector.add(taiKhoan.toDataRow());
-        }
-        return dataVector;
+   public Vector<Vector<Object>> toDataVector(List<TaiKhoan> list) {
+    Vector<Vector<Object>> dataVector = new Vector<>();
+    for (TaiKhoan taiKhoan : list) {
+        // Tạo một Vector<Object> mới cho mỗi đối tượng TaiKhoan
+        Vector<Object> rowVector = new Vector<>(Arrays.asList(taiKhoan.toDataRow()));
+        dataVector.add(rowVector);
     }
+    return dataVector;
 }
-
+}
 

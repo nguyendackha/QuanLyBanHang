@@ -228,27 +228,28 @@ private ArrayList<KhuyenMai> listKhuyenMai = new ArrayList<>();
     }//GEN-LAST:event_btnLuuActionPerformed
 
     private void btnSuaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSuaActionPerformed
-     if (txtMaKM.getText().trim().equals("")) {
-    JOptionPane.showMessageDialog(this, "Mã sự kiện không được để trống");
-    return;
-}
-KhuyenMai khuyenMai = getData();
-try {
-    int maKhuyenMai = Integer.parseInt(txtMaKM.getText());
+         if (txtMaKM.getText().trim().equals("")) {
+        JOptionPane.showMessageDialog(this, "Mã sự kiện không được để trống");
+        return;
+    }
+    KhuyenMai khuyenMai = getData();
+    try {
+     String maKhuyenMai = txtMaKM.getText();
     khuyenMai.setMaKhuyenMai(maKhuyenMai);
 
-    // Kiểm tra nếu update thành công (nếu không có exception được ném)
-    khuyenMaiDAO.update(khuyenMai);
-    JOptionPane.showMessageDialog(this, "Cập nhật thành công");
-    listKhuyenMai = new ArrayList<>(khuyenMaiDAO.selectAll());
-    showData(listKhuyenMai);
 
-} catch (NumberFormatException e) {
-    JOptionPane.showMessageDialog(this, "Mã sự kiện phải là một số nguyên");
-} catch (Exception e) {
-    JOptionPane.showMessageDialog(this, "Cập nhật thất bại"); 
-    // Xử lý các exception khác nếu cần
-}
+        // Kiểm tra nếu update thành công (nếu không có exception được ném)
+        khuyenMaiDAO.update(khuyenMai);
+        JOptionPane.showMessageDialog(this, "Cập nhật thành công");
+        listKhuyenMai = new ArrayList<>(khuyenMaiDAO.selectAll());
+        showData(listKhuyenMai);
+
+    } catch (NumberFormatException e) {
+        JOptionPane.showMessageDialog(this, "Mã sự kiện phải là một số nguyên");
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, "Cập nhật thất bại"); 
+        // Xử lý các exception khác nếu cần
+    }
 
     }//GEN-LAST:event_btnSuaActionPerformed
 
@@ -258,7 +259,7 @@ try {
             return;
         }
 
-        int maKhuyenMai = Integer.parseInt(txtMaKM.getText());
+        String maKhuyenMai =  (txtMaKM.getText());
 
         try {
             khuyenMaiDAO.delete(maKhuyenMai);

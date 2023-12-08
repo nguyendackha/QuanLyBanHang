@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Locale;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import net.sf.jasperreports.engine.JasperCompileManager;
@@ -34,13 +35,30 @@ import net.sf.jasperreports.view.JasperViewer;
  *
  * @author ASUS
  */
-public class ThanhToan extends javax.swing.JPanel {
+public final class ThanhToan extends javax.swing.JPanel {
 
   
     private KhuyenMaiDAO khuyenMaiDAO = new KhuyenMaiDAO();
     private DefaultComboBoxModel boxModel = new DefaultComboBoxModel();
     private List<KhuyenMai> list = new ArrayList<>();
     private JComboBox<KhuyenMai> cbbKhuyenMai;
+       public static void main(String[] args) {
+        // Tạo một JFrame mới để chứa SanPhamPanel
+        JFrame frame = new JFrame("Quản Lý Thanh Toán");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        // Tạo một đối tượng ThanhToan
+        ThanhToan thanhToan = new ThanhToan();
+
+        // Thêm ThanhToan vào JFrame
+        frame.getContentPane().add(thanhToan);
+
+        // Cấu hình JFrame
+        frame.pack();
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
+    }
+
 
 
     /**
@@ -92,7 +110,7 @@ public class ThanhToan extends javax.swing.JPanel {
     for (Entity.HoaDon hoaDon : danhSachHoaDon) {
         Object[] item = new Object[9];
         item[0] = hoaDon.getMaHoaDon();
-        item[1] = hoaDon.getTenNhanVien();
+        item[1] = hoaDon.getMaNhanVien();
         item[2] = hoaDon.getTenKhachHang();
         item[3] = hoaDon.getNgayTao();
         item[4] = hoaDon.getNgayThanhToan();

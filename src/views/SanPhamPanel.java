@@ -15,6 +15,7 @@ import javax.imageio.ImageIO;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.RowFilter;
 import javax.swing.table.DefaultTableModel;
@@ -39,6 +40,23 @@ public class SanPhamPanel extends javax.swing.JPanel {
     private SanPhamDAO sanPhamDAO = new SanPhamDAO();
     private DanhMucDAO danhMucDAO = new DanhMucDAO(); 
     private int maSanPham;
+    public static void main(String[] args) {
+        // Tạo một JFrame mới để chứa SanPhamPanel
+        JFrame frame = new JFrame("Quản Lý Sản Phẩm");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        // Tạo một đối tượng SanPhamPanel
+        SanPhamPanel sanPhamPanel = new SanPhamPanel();
+
+        // Thêm SanPhamPanel vào JFrame
+        frame.getContentPane().add(sanPhamPanel);
+
+        // Cấu hình JFrame
+        frame.pack();
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
+    }
+
     
  public SanPhamPanel() {
     initComponents();
@@ -84,7 +102,7 @@ public class SanPhamPanel extends javax.swing.JPanel {
  private void loadCBB(ArrayList<DanhMuc> list) {
     boxModel = (DefaultComboBoxModel) cbbMaSP.getModel();
     for (DanhMuc danhMuc : list) {
-        cbbMaSP.addItem(danhMuc.getMaSanPham() + " - " + danhMuc.getTenSanPham());
+        cbbMaSP.addItem(danhMuc.getMaDanhMuc()+ " - " + danhMuc.getTenDanhMuc());
     }
 }
 
@@ -151,49 +169,78 @@ public class SanPhamPanel extends javax.swing.JPanel {
         txt_TenSP.setText("");
     }
 
-private void showData(ArrayList<SanPham> listData) {
-    dtm = (DefaultTableModel) tblSanPham.getModel();
-    dtm.setRowCount(0);
+  
+     //Hiển thị dữ liệu của danh sách sản phẩm vào bảng.
+    
+     //listData Danh sách sản phẩm cần hiển thị.
+   
+    private void showData(ArrayList<SanPham> listData) {
+        // Lấy mô hình bảng và đặt số dòng là 0 để xóa dữ liệu cũ.
+        dtm = (DefaultTableModel) tblSanPham.getModel();
+        dtm.setRowCount(0);
 
-    for (SanPham sanPham : listData) {
-        dtm.addRow(sanPham.toDataRow2());
-    }
-}
-private void showData1(ArrayList<DanhMuc> listDanhMuc) {
-    dtm1 = (DefaultTableModel) tbl_LoaiSanPham.getModel();
-    dtm1.setRowCount(0);
-    for (DanhMuc danhMuc : listDanhMuc) {
-        dtm1.addRow(danhMuc.toDataRow());
-    }
-}
-
-private void showData2(List<Object[]> listData) {
-    dtm2 = (DefaultTableModel) tbl_SanPham.getModel();
-    dtm2.setRowCount(0);
-
-    for (Object[] rowData : listData) {
-        dtm2.addRow(rowData);
-    }
-}
-
-private void fillData(int index) {
-    try {
-        SanPhamDAO sanPhamDAO = new SanPhamDAO();
-        SanPham sanPham = sanPhamDAO.selectById(listSanPham.get(index).getMaSanPham());
-
-        txtTenSP.setText(sanPham.getTenSanPham());
-        cbbMaSP.setSelectedItem(sanPham.getMaLoaiSP());
-        
-        DanhMuc danhMuc = sanPham.getDanhMuc();
-        if (danhMuc != null) {
-            txtTenLoaiSP.setText(danhMuc.getTenSanPham());
-        } else {
-            txtTenLoaiSP.setText(""); // hoặc xử lý khác tùy vào yêu cầu của bạn
+        // Duyệt qua danh sách sản phẩm và thêm từng sản phẩm vào bảng.
+        for (SanPham sanPham : listData) {
+            dtm.addRow(sanPham.toDataRow2());
         }
+    }
 
-        txtDonVi.setText(sanPham.getDonVi());
-        txtGiaTien.setText(String.valueOf(sanPham.getGiaTien())); // Chuyển giá tiền thành chuỗi để đặt vào JTextField
-        txtMaSP.setText(String.valueOf(sanPham.getMaSanPham()));
+  
+     // Hiển thị dữ liệu của danh sách danh mục vào bảng.
+    
+    // Danh sách danh mục cần hiển thị.
+    
+    private void showData1(ArrayList<DanhMuc> listDanhMuc) {
+        // Lấy mô hình bảng và đặt số dòng là 0 để xóa dữ liệu cũ.
+        dtm1 = (DefaultTableModel) tbl_LoaiSanPham.getModel();
+        dtm1.setRowCount(0);
+
+        // Duyệt qua danh sách danh mục và thêm từng danh mục vào bảng.
+        for (DanhMuc danhMuc : listDanhMuc) {
+            dtm1.addRow(danhMuc.toDataRow());
+        }
+    }
+
+
+     // Hiển thị dữ liệu của danh sách đối tượng (Object[]) vào bảng.
+
+     // Danh sách đối tượng cần hiển thị.
+
+    private void showData2(List<Object[]> listData) {
+        // Lấy mô hình bảng và đặt số dòng là 0 để xóa dữ liệu cũ.
+        dtm2 = (DefaultTableModel) tbl_SanPham.getModel();
+        dtm2.setRowCount(0);
+
+        // Duyệt qua danh sách đối tượng và thêm từng đối tượng vào bảng.
+        for (Object[] rowData : listData) {
+            dtm2.addRow(rowData);
+        }
+    }
+
+//Đổ dữ liệu danh mục từ danh sách danh mục vào các trường dữ liệu trên giao diện.
+
+private void fillData(String index) {
+    try {
+        // Tạo đối tượng SanPhamDAO để truy xuất dữ liệu từ cơ sở dữ liệu.
+        SanPhamDAO sanPhamDAO = new SanPhamDAO();
+
+        // Lấy thông tin sản phẩm tại vị trí index trong danh sách sản phẩm.
+        SanPham sanPham = sanPhamDAO.selectById(listSanPham.get(Integer.parseInt(index)).getMaSanPham());
+        // Đổ dữ liệu vào các trường trên giao diện.
+        txtTenSP.setText(sanPham.getTenSanPham());
+        cbbMaSP.setSelectedItem(sanPham.getMaDanhMuc());
+        // Lấy thông tin danh mục của sản phẩm và hiển thị trên giao diện.
+        String maDanhMuc = sanPham.getMaDanhMuc();
+        DanhMucDAO danhMucDAO = new DanhMucDAO();
+        DanhMuc danhMuc = danhMucDAO.selectById(maDanhMuc);
+        if (danhMuc != null) {
+            txtTenLoaiSP.setText(danhMuc.getTenDanhMuc());
+        } else {
+            txtTenLoaiSP.setText("");
+        }
+        txtDonVi.setText(String.valueOf(sanPham.getDonVi()));
+        txtGiaTien.setText(String.valueOf(sanPham.getGiaTien()));
+        txtMaSP.setText(sanPham.getMaSanPham());
 
         // Kiểm tra trạng thái và thiết lập ô radio tương ứng
         if ("Còn".equals(sanPham.getTrangThai())) {
@@ -201,42 +248,50 @@ private void fillData(int index) {
         } else {
             rdoHet.setSelected(true);
         }
-
+        // Cập nhật hình ảnh sản phẩm trên giao diện.
         UpdateHinh(sanPham.getImageSanPham());
     } catch (Exception ex) {
         ex.printStackTrace();
-        // Xử lý lỗi theo nhu cầu của bạn
+        // Xử lý lỗi
     }
 }
 
+
 private void fillData1(int index) {
+    // Lấy thông tin danh mục tại vị trí index trong danh sách danh mục.
     DanhMuc danhMuc = listDanhMuc.get(index);
-    txt_TenSP.setText(danhMuc.getTenSanPham());
-    txt_MaSP.setText(String.valueOf(danhMuc.getMaSanPham()));
+    // Hiển thị thông tin danh mục trên giao diện.
+    txt_TenSP.setText(danhMuc.getTenDanhMuc());
+    txt_MaSP.setText(String.valueOf(danhMuc.getMaDanhMuc()));
 }
 
 
 public void UpdateHinh(String image) {
-    ImageIcon img = new ImageIcon(getClass().getResource("/FoodPNG/" + image));
+    // Tạo ImageIcon từ tệp ảnh và thay đổi kích thước ảnh để vừa với JLabel.
+    ImageIcon img = new ImageIcon(getClass().getResource("/QuanAoPNG/" + image));
     Image anh = img.getImage();
     ImageIcon icon = new ImageIcon(anh.getScaledInstance(lbImages.getWidth(),
             lbImages.getHeight(), Image.SCALE_SMOOTH));
     lbImages.setIcon(icon);
 }
 
-private SanPham getData() {
-    SanPham sanPham = new SanPham();
-    sanPham.setMaLoaiSP(Integer.parseInt((String) cbbMaSP.getSelectedItem()));
-    if (txtTenSP.getText().trim().equals("")) {
-        JOptionPane.showMessageDialog(this, "Tên sản phẩm không được để trống");
-        return null;
-    }
-    sanPham.setTenSanPham(txtTenSP.getText());
-    if (txtDonVi.getText().trim().equals("")) {
+    private SanPham getData() {
+        // Tạo đối tượng SanPham và đặt giá trị các trường từ trên giao diện.
+        SanPham sanPham = new SanPham();
+        sanPham.setMaDanhMuc((String) cbbMaSP.getSelectedItem());
+        if (txtDonVi.getText().trim().equals("")) {
         JOptionPane.showMessageDialog(this, "Đơn vị sản phẩm không được để trống");
         return null;
     }
-    sanPham.setDonVi(txtDonVi.getText());
+
+    try {
+        int donVi = Integer.parseInt(txtDonVi.getText());
+        sanPham.setDonVi(donVi);
+    } catch (NumberFormatException e) {
+        JOptionPane.showMessageDialog(this, "Vui lòng nhập một giá trị đơn vị hợp lệ");
+        return null;
+    }
+
     String tt = "Còn";
     if (rdoCon.isSelected()) {
         sanPham.setTrangThai(tt);
@@ -244,11 +299,14 @@ private SanPham getData() {
         tt = "Hết";
         sanPham.setTrangThai(tt);
     }
+
     if (txtGiaTien.getText().trim().equals("")) {
         JOptionPane.showMessageDialog(this, "Giá sản phẩm không được để trống");
         return null;
     }
+
     try {
+        // Kiểm tra xem giá tiền có phải là số hay không.
         double bien = Double.valueOf(txtGiaTien.getText());
     } catch (NumberFormatException e) {
         JOptionPane.showMessageDialog(this, "Giá sản phẩm không được Nhập chữ");
@@ -277,9 +335,11 @@ private DanhMuc getData2() {
         return null;
     }
     // Truyền giá trị cho constructor có tham số của DanhMuc
-    danhMuc = new DanhMuc(/* MaSanPham */ 0, txt_TenSP.getText());
+    danhMuc = new DanhMuc(/* MaDanhMuc */ "", txt_TenSP.getText());
     return danhMuc;
 }
+
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -907,23 +967,40 @@ private DanhMuc getData2() {
     }// </editor-fold>//GEN-END:initComponents
 
     private void tblSanPhamMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblSanPhamMouseClicked
-        fillData(tblSanPham.getSelectedRow());
+    int selectedRowIndex = tblSanPham.getSelectedRow();
+    String selectedRowString = String.valueOf(selectedRowIndex);
+    fillData(selectedRowString);
     }//GEN-LAST:event_tblSanPhamMouseClicked
 
     private void lbImagesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbImagesMouseClicked
-        try {
-            JFileChooser jfc = new JFileChooser("C:\\Users\\ASUS\\OneDrive\\Desktop\\PRO1041\\DUAN1\\src\\FoodPNG");
-            jfc.showOpenDialog(null);
-            File file = jfc.getSelectedFile();
-            Image img = ImageIO.read(file);
-            strHinhAnh = file.getName();
-            lbImages.setText("");
-            int width = lbImages.getWidth();
-            int height = lbImages.getHeight();
-            lbImages.setIcon(new ImageIcon(img.getScaledInstance(width, height, 0)));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+           try {
+        // Tạo một đối tượng JFileChooser để chọn tệp hình ảnh từ hệ thống.
+        JFileChooser jfc = new JFileChooser("C:\\Users\\ASUS\\OneDrive\\Desktop\\PRO1041\\DUAN1\\src\\QuanAoPNG");
+
+        // Hiển thị hộp thoại chọn tệp và lấy tệp được chọn.
+        jfc.showOpenDialog(null);
+        File file = jfc.getSelectedFile();
+
+        // Đọc hình ảnh từ tệp và gán vào đối tượng Image.
+        Image img = ImageIO.read(file);
+
+        // Lấy tên tệp hình ảnh và lưu vào biến strHinhAnh.
+        strHinhAnh = file.getName();
+
+        // Đặt văn bản của JLabel lbImages là rỗng.
+        lbImages.setText("");
+
+        // Lấy kích thước của JLabel lbImages.
+        int width = lbImages.getWidth();
+        int height = lbImages.getHeight();
+
+        // Đặt hình ảnh vào JLabel và thay đổi kích thước theo kích thước của JLabel.
+        lbImages.setIcon(new ImageIcon(img.getScaledInstance(width, height, 0)));
+    } catch (Exception e) {
+        // In ra thông báo lỗi nếu có vấn đề khi đọc hoặc hiển thị hình ảnh.
+        e.printStackTrace();
+    }
+
     }//GEN-LAST:event_lbImagesMouseClicked
 
     private void btnThemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnThemActionPerformed
@@ -935,35 +1012,50 @@ private DanhMuc getData2() {
     }//GEN-LAST:event_btnThemActionPerformed
 
     private void btnLuuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLuuActionPerformed
-            sanPhamDAO.insert(getData());
-        String mess = "Thêm sản phẩm thành công";
-        JOptionPane.showMessageDialog(this, mess);
-        listSanPham = (ArrayList<SanPham>) sanPhamDAO.getAll(); 
-        showData(listSanPham);
+    // Thêm sản phẩm mới vào cơ sở dữ liệu bằng cách gọi phương thức insert của đối tượng SanPhamDAO.
+    sanPhamDAO.insert(getData());
+
+    // Hiển thị thông báo thành công sau khi thêm sản phẩm vào cơ sở dữ liệu.
+    String mess = "Thêm sản phẩm thành công";
+    JOptionPane.showMessageDialog(this, mess);
+
+    // Lấy danh sách sản phẩm từ cơ sở dữ liệu sau khi thêm mới và cập nhật danh sách hiển thị trên giao diện.
+    listSanPham = (ArrayList<SanPham>) sanPhamDAO.getAll(); 
+    showData(listSanPham);
     }//GEN-LAST:event_btnLuuActionPerformed
 
     private void btnSuaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSuaActionPerformed
-            if (txtMaSP.getText().equals("")) {
-            JOptionPane.showMessageDialog(this, "Chọn sản phẩm để sửa");
-            return;
-        }
+                // Kiểm tra xem ô nhập mã sản phẩm có trống hay không.
+    if (txtMaSP.getText().equals("")) {
+        // Hiển thị thông báo nếu không có mã sản phẩm được chọn để sửa.
+        JOptionPane.showMessageDialog(this, "Chọn sản phẩm để sửa");
+        return;
+    }
 
-        maSanPham = Integer.parseInt(txtMaSP.getText());
+    // Lấy mã sản phẩm từ trường mã sản phẩm trên giao diện.
+    maSanPham = Integer.parseInt(txtMaSP.getText());
 
-        // Gọi getData() để lấy thông tin sản phẩm
-        SanPham danhMuc = getData();
+    // Gọi phương thức getData() để lấy thông tin sản phẩm từ các trường dữ liệu trên giao diện.
+    SanPham sanPhamToUpdate = getData();
 
-        if (danhMuc != null) {
-            danhMuc.setMaSanPham(maSanPham); // Gán maSanPham cho danhMuc
-            sanPhamDAO.update(danhMuc);
-            String mess = "Sửa sản phẩm thành công";
-            JOptionPane.showMessageDialog(this, mess);
+    if (sanPhamToUpdate != null) {
+        // Gán mã sản phẩm cho đối tượng SanPham cần cập nhật.
+        sanPhamToUpdate.setMaSanPham(String.valueOf((char) Integer.parseInt(txtMaSP.getText())));
+        // Gọi phương thức update của đối tượng SanPhamDAO để cập nhật thông tin sản phẩm trong cơ sở dữ liệu.
+        sanPhamDAO.update(sanPhamToUpdate);
 
-            listSanPham = new ArrayList<>(sanPhamDAO.getAll());
-            showData(listSanPham);
-        } else {
-            JOptionPane.showMessageDialog(this, "Không tìm thấy sản phẩm để sửa");
-        }
+        // Hiển thị thông báo thành công sau khi sửa sản phẩm.
+        String mess = "Sửa sản phẩm thành công";
+        JOptionPane.showMessageDialog(this, mess);
+
+        // Cập nhật danh sách sản phẩm sau khi sửa và hiển thị trên giao diện.
+        listSanPham = new ArrayList<>(sanPhamDAO.getAll());
+        showData(listSanPham);
+    } else {
+        // Hiển thị thông báo nếu không tìm thấy sản phẩm để sửa.
+        JOptionPane.showMessageDialog(this, "Không tìm thấy sản phẩm để sửa");
+    }
+
     }//GEN-LAST:event_btnSuaActionPerformed
 
     private void btnXoaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnXoaActionPerformed
@@ -971,7 +1063,7 @@ private DanhMuc getData2() {
            JOptionPane.showMessageDialog(this, "Chọn mã sản phẩm để xóa");
            return;
         }
-        int maSanPham = Integer.parseInt(txtMaSP.getText());
+        String maSanPham = (txtMaSP.getText());
         sanPhamDAO.delete(maSanPham); // Sửa đoạn này để xóa sản phẩm
          String mess = "Xóa sản phẩm thành công";
          JOptionPane.showMessageDialog(this, mess);
@@ -981,14 +1073,28 @@ private DanhMuc getData2() {
     }//GEN-LAST:event_btnXoaActionPerformed
 
     private void cbbMaSPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbbMaSPActionPerformed
-       String maTheLoaiString = (String) cbbMaSP.getSelectedItem();
-int maTheLoai = Integer.parseInt(maTheLoaiString);
+          // Lấy giá trị maDanhMucString từ cbbMaSP
+    String maDanhMucString = (String) cbbMaSP.getSelectedItem();
 
-// Sử dụng DanhMucDAO để lấy tên loại sản phẩm
-String tenLoaiSP = danhMucDAO.getTenLoaiSPById(maTheLoai);
+    try {
+        // Chuyển đổi maDanhMucString từ String sang int
+        int maDanhMuc = Integer.parseInt(maDanhMucString);
 
-// Đặt giá trị cho txtTenLoaiSP
-txtTenLoaiSP.setText(tenLoaiSP != null ? tenLoaiSP : "");
+        // Sử dụng DanhMucDAO để lấy tên danh mục sản phẩm
+        DanhMucDAO danhMucDAO = new DanhMucDAO();
+        DanhMuc danhMuc = danhMucDAO.selectById(String.valueOf(maDanhMuc));
+
+        // Kiểm tra xem danh mục có tồn tại không
+        if (danhMuc != null) {
+            // Lấy tên danh mục và đặt giá trị cho txtTenLoaiSP
+            String tenLoaiSP = danhMuc.getTenDanhMuc();
+            txtTenLoaiSP.setText(tenLoaiSP);
+        } else {
+            JOptionPane.showMessageDialog(this, "Không tìm thấy danh mục với mã " + maDanhMuc);
+        }
+    } catch (NumberFormatException e) {
+        JOptionPane.showMessageDialog(this, "Mã danh mục không hợp lệ");
+    }
 
     }//GEN-LAST:event_cbbMaSPActionPerformed
 
@@ -1002,23 +1108,32 @@ txtTenLoaiSP.setText(tenLoaiSP != null ? tenLoaiSP : "");
     }//GEN-LAST:event_btn_ThemActionPerformed
 
     private void btn_ShowActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_ShowActionPerformed
-       if (txt_MaSP.getText().equals("")) {
+           // Kiểm tra xem ô nhập mã sản phẩm có trống hay không.
+    if (txt_MaSP.getText().equals("")) {
+        // Hiển thị thông báo nếu không có mã sản phẩm được chọn để hiển thị thông tin.
         JOptionPane.showMessageDialog(this, "Chọn mã sản phẩm để show");
         return;
     }
 
     try {
-        int maSanPham = Integer.parseInt(txt_MaSP.getText());
+        // Lấy mã sản phẩm từ trường mã sản phẩm trên giao diện.
+        String maSanPham = (txt_MaSP.getText());
+
+        // Gọi phương thức selectById của đối tượng SanPhamDAO để lấy thông tin sản phẩm theo mã.
         SanPham sanPham = sanPhamDAO.selectById(maSanPham);
 
         if (sanPham == null) {
+            // Hiển thị thông báo nếu không tìm thấy sản phẩm với mã đã nhập.
             JOptionPane.showMessageDialog(this, "Không tìm thấy sản phẩm với mã " + maSanPham);
         } else {
+            // Gọi phương thức showData2 để hiển thị thông tin sản phẩm trên giao diện.
             showData2((List<Object[]>) sanPham);
         }
     } catch (NumberFormatException e) {
+        // Hiển thị thông báo lỗi nếu người dùng nhập mã sản phẩm không phải là số nguyên.
         JOptionPane.showMessageDialog(this, "Nhập mã sản phẩm là một số nguyên");
     }
+
     }//GEN-LAST:event_btn_ShowActionPerformed
 
     private void btn_LuuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_LuuActionPerformed
@@ -1039,7 +1154,7 @@ txtTenLoaiSP.setText(tenLoaiSP != null ? tenLoaiSP : "");
     DanhMuc danhMuc = getData2();
     // Kiểm tra xem danhMuc có null không và gán mã sản phẩm vào danhMuc
     if (danhMuc != null) {
-        danhMuc.setMaSanPham(maSanPham);
+        danhMuc.setMaDanhMuc(String.valueOf(maSanPham));
         danhMucDAO.update(danhMuc);
         String mess = "Cập nhật danh mục thành công";
         JOptionPane.showMessageDialog(this, mess);
@@ -1055,7 +1170,7 @@ txtTenLoaiSP.setText(tenLoaiSP != null ? tenLoaiSP : "");
                 JOptionPane.showMessageDialog(this, "Chọn mã sản phẩm để xóa");
                 return;
             }
-            int maSanPham = Integer.parseInt(txt_MaSP.getText());
+            String maSanPham = (txt_MaSP.getText());
             danhMucDAO.delete(maSanPham);
             String mess = "Xóa danh mục thành công";
             JOptionPane.showMessageDialog(this, mess);
@@ -1069,7 +1184,7 @@ txtTenLoaiSP.setText(tenLoaiSP != null ? tenLoaiSP : "");
          JOptionPane.showMessageDialog(this, "Chọn mã san phẩm để xóa");
           return;
         }
-        int maSanPham = Integer.parseInt(txt_MSP.getText());
+        String maSanPham = (txt_MSP.getText());
         sanPhamDAO.delete(maSanPham);
         String mess = "Xóa sản phẩm thành công";
         JOptionPane.showMessageDialog(this, mess);

@@ -47,11 +47,12 @@ PreparedStatement ps = null;
     public String checkLogin(String username, String password) {
     for (TaiKhoan u : listTaiKhoan) {
         if (u.getTaiKhoan().equals(username) && u.getMatKhau().equals(password)) {
-            return u.getLoaiTaiKhoan();
+            return u.isLoaiTaiKhoan() ? "QL" : "NV";
         }
     }
     return null;
 }
+
 
 
     /**

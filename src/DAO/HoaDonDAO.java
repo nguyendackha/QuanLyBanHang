@@ -9,10 +9,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HoaDonDAO extends ManagerDAO<HoaDon, Integer> {
+public class HoaDonDAO extends ManagerDAO<HoaDon, String> {
 
-    private final String INSERT_SQL = "INSERT INTO HoaDon(MaNhanVien, TenKhachHang, NgayTao, NgayThanhToan, TongTien, TrangThai) VALUES(?,?,?,?,?,?)";
-    private final String UPDATE_SQL = "UPDATE HoaDon SET MaNhanVien=?, TenKhachHang=?, NgayTao=?, NgayThanhToan=?, TongTien=?, TrangThai=? WHERE MaHoaDon=?";
+    private final String INSERT_SQL = "INSERT INTO HoaDon(MaHoaDon, MaNhanVien, TenKhachHang, NgayTao, NgayThanhToan, MaKhuyenMai, TongTien, TrangThai, GhiChu, Ngay) VALUES(?,?,?,?,?,?,?,?,?,?)";
+    private final String UPDATE_SQL = "UPDATE HoaDon SET MaNhanVien=?, TenKhachHang=?, NgayTao=?, NgayThanhToan=?, TongTien=?, TrangThai=?, MaKhuyenMai=?, GhiChu=?, Ngay=? WHERE MaHoaDon=?";
     private final String DELETE_SQL = "DELETE FROM HoaDon WHERE MaHoaDon=?";
     private final String SELECT_ALL_SQL = "SELECT * FROM HoaDon";
     private final String XOA_HOA_DON_SQL = "DELETE FROM HoaDon WHERE MaHoaDon=?";
@@ -30,12 +30,16 @@ public class HoaDonDAO extends ManagerDAO<HoaDon, Integer> {
     @Override
     public void insert(HoaDon entity) {
         XJdbc.executeUpdate(INSERT_SQL,
+                entity.getMaHoaDon(),
                 entity.getMaNhanVien(),
                 entity.getTenKhachHang(),
                 entity.getNgayTao(),
                 entity.getNgayThanhToan(),
+                entity.getMaKhuyenMai(),
                 entity.getTongTien(),
-                entity.getTrangThai());
+                entity.getTrangThai(),
+                entity.getGhiChu(),
+                entity.getNgay());
     }
 
     @Override
@@ -47,16 +51,19 @@ public class HoaDonDAO extends ManagerDAO<HoaDon, Integer> {
                 entity.getNgayThanhToan(),
                 entity.getTongTien(),
                 entity.getTrangThai(),
+                entity.getMaKhuyenMai(),
+                entity.getGhiChu(),
+                entity.getNgay(),
                 entity.getMaHoaDon());
     }
 
     @Override
-    public void delete(Integer id) {
+    public void delete(String id) {
         XJdbc.executeUpdate(DELETE_SQL, id);
     }
 
     @Override
-    public HoaDon selectById(Integer id) {
+    public HoaDon selectById(String id) {
         List<HoaDon> list = this.selectBySQL(SELECT_BY_ID_SQL, id);
         if (list.isEmpty()) {
             return null;
@@ -76,6 +83,7 @@ public class HoaDonDAO extends ManagerDAO<HoaDon, Integer> {
     public void updateHoaDon(String maHoaDon, String maKhuyenMai, String trangThai, String ngayThanhToan, String ngay) {
         XJdbc.executeUpdate(UPDATE_HOADON_SQL, maKhuyenMai, trangThai, ngayThanhToan, ngay, maHoaDon);
     }
+
     public void xoaHoaDon(String maHoaDon) {
         XJdbc.executeUpdate(XOA_HOA_DON_SQL, maHoaDon);
     }
@@ -91,6 +99,7 @@ public class HoaDonDAO extends ManagerDAO<HoaDon, Integer> {
     public List<HoaDon> layDuLieuHoaDonTrongKhoangNgay(String ngayBatDau, String ngayKetThuc) {
         return this.selectBySQL(SELECT_BY_NGAY_SQL, ngayBatDau, ngayKetThuc);
     }
+
     public double getTongTienDaThanhToan() throws SQLException {
         String sql = "SELECT sum(TongTien) as TongTien FROM HoaDon WHERE TrangThai = N'Đã thanh toán'";
         ResultSet rs = XJdbc.executeQuery(sql);
@@ -99,6 +108,7 @@ public class HoaDonDAO extends ManagerDAO<HoaDon, Integer> {
         }
         return 0; // Trả về 0 nếu không có dữ liệu
     }
+
     public int getSoLuongHoaDonDaThanhToan() throws SQLException {
         String sql = "SELECT count(MaHoaDon) as SoLuongHoaDon FROM HoaDon WHERE TrangThai = N'Đã thanh toán'";
         ResultSet rs = XJdbc.executeQuery(sql);
@@ -135,13 +145,16 @@ public class HoaDonDAO extends ManagerDAO<HoaDon, Integer> {
             ResultSet rs = XJdbc.executeQuery(sql, args);
             while (rs.next()) {
                 HoaDon entity = new HoaDon(
-                        rs.getInt("MaHoaDon"),
+                        rs.getString("MaHoaDon"),
                         rs.getString("MaNhanVien"),
                         rs.getString("TenKhachHang"),
-                        rs.getString("NgayTao"),
-                        rs.getString("NgayThanhToan"), rs.getString("TrangThai"),
-                        rs.getBigDecimal("TongTien"),
-                        rs.getString("TrangThai"), rs.getString("GhiChu"));
+                        rs.getDate("NgayTao"),
+                        rs.getDate("NgayThanhToan"),
+                        rs.getString("MaKhuyenMai"),
+                        rs.getInt("TongTien"),
+                        rs.getString("TrangThai"),
+                        rs.getString("GhiChu"),
+                        rs.getDate("Ngay"));
                 list.add(entity);
             }
             rs.getStatement().getConnection().close();

@@ -2,15 +2,16 @@ package DAO;
 
 import Entity.KhuyenMai;
 import Helper.XJdbc;
+
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class KhuyenMaiDAO extends ManagerDAO<KhuyenMai, Integer> {
+public class KhuyenMaiDAO extends ManagerDAO<KhuyenMai, String> {
 
-    private final String INSERT_SQL = "INSERT INTO KhuyenMai(TenSuKien, TienGiam) VALUES(?,?)";
+    private final String INSERT_SQL = "INSERT INTO KhuyenMai(MaKhuyenMai, TenSuKien, TienGiam) VALUES(?,?,?)";
     private final String UPDATE_SQL = "UPDATE KhuyenMai SET TenSuKien=?, TienGiam=? WHERE MaKhuyenMai=?";
     private final String DELETE_SQL = "DELETE FROM KhuyenMai WHERE MaKhuyenMai=?";
     private final String SELECT_ALL_SQL = "SELECT * FROM KhuyenMai";
@@ -19,6 +20,7 @@ public class KhuyenMaiDAO extends ManagerDAO<KhuyenMai, Integer> {
     @Override
     public void insert(KhuyenMai entity) {
         XJdbc.executeUpdate(INSERT_SQL,
+                entity.getMaKhuyenMai(),
                 entity.getTenSuKien(),
                 entity.getTienGiam());
     }
@@ -32,12 +34,12 @@ public class KhuyenMaiDAO extends ManagerDAO<KhuyenMai, Integer> {
     }
 
     @Override
-    public void delete(Integer id) {
+    public void delete(String id) {
         XJdbc.executeUpdate(DELETE_SQL, id);
     }
 
     @Override
-    public KhuyenMai selectById(Integer id) {
+    public KhuyenMai selectById(String id) {
         List<KhuyenMai> list = this.selectBySQL(SELECT_BY_ID_SQL, id);
         if (list.isEmpty()) {
             return null;
@@ -54,22 +56,18 @@ public class KhuyenMaiDAO extends ManagerDAO<KhuyenMai, Integer> {
         return selectBySQL(SELECT_ALL_SQL);
     }
 
-    public Integer getMaKhuyenMai(KhuyenMai entity) {
-        return entity.getMaKhuyenMai();
-    }
-
     public BigDecimal getTienGiamByMaKhuyenMai(String maKhuyenMai) {
-    String sql = "SELECT TienGiam FROM KhuyenMai WHERE MaKhuyenMai=?";
-    try {
-        ResultSet rs = XJdbc.executeQuery(sql, maKhuyenMai);
-        if (rs.next()) {
-            return rs.getBigDecimal("TienGiam");
+        String sql = "SELECT TienGiam FROM KhuyenMai WHERE MaKhuyenMai=?";
+        try {
+            ResultSet rs = XJdbc.executeQuery(sql, maKhuyenMai);
+            if (rs.next()) {
+                return rs.getBigDecimal("TienGiam");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
-    } catch (SQLException e) {
-        throw new RuntimeException(e);
+        return BigDecimal.ZERO; // hoặc giá trị mặc định khác nếu không tìm thấy
     }
-    return BigDecimal.ZERO; // hoặc giá trị mặc định khác nếu không tìm thấy
-}
 
     public BigDecimal getTienGiam(String maKhuyenMai) {
         String sql = "SELECT TienGiam FROM KhuyenMai WHERE MaKhuyenMai=?";
@@ -83,6 +81,18 @@ public class KhuyenMaiDAO extends ManagerDAO<KhuyenMai, Integer> {
         }
         return BigDecimal.ZERO; // hoặc giá trị mặc định khác nếu không tìm thấy
     }
+    public String getMaKhuyenMai(KhuyenMai khuyenMai) {
+        String sql = "SELECT MaKhuyenMai FROM KhuyenMai WHERE TenKhuyenMai=?";
+        try {
+            ResultSet rs = XJdbc.executeQuery(sql, khuyenMai.getTenSuKien());
+            if (rs.next()) {
+                return rs.getString("MaKhuyenMai");
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return null;
+    }
 
     @Override
     protected List<KhuyenMai> selectBySQL(String sql, Object... args) {
@@ -91,7 +101,7 @@ public class KhuyenMaiDAO extends ManagerDAO<KhuyenMai, Integer> {
             ResultSet rs = XJdbc.executeQuery(sql, args);
             while (rs.next()) {
                 KhuyenMai entity = new KhuyenMai(
-                        rs.getInt("MaKhuyenMai"),
+                        rs.getString("MaKhuyenMai"),
                         rs.getString("TenSuKien"),
                         rs.getInt("TienGiam"));
                 list.add(entity);

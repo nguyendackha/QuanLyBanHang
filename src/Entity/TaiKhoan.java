@@ -1,33 +1,29 @@
 package Entity;
 
-import java.util.Vector;
-
 public class TaiKhoan {
-    private String maTk;
+    private int MaTk;
     private String TaiKhoan;
     private String MatKhau;
     private String Email;
-    private String LoaiTaiKhoan;
+    private boolean LoaiTaiKhoan;
 
-    // Constructor không tham số
     public TaiKhoan() {
-        // Khởi tạo một số giá trị mặc định nếu cần
     }
 
-    public TaiKhoan(String maTk, String TaiKhoan, String MatKhau, String Email, String LoaiTaiKhoan) {
-        this.maTk = maTk;
+    public TaiKhoan(int MaTk, String TaiKhoan, String MatKhau, String Email, boolean LoaiTaiKhoan) {
+        this.MaTk = MaTk;
         this.TaiKhoan = TaiKhoan;
         this.MatKhau = MatKhau;
         this.Email = Email;
         this.LoaiTaiKhoan = LoaiTaiKhoan;
     }
 
-    public String getMaTk() {
-        return maTk;
+    public int getMaTk() {
+        return MaTk;
     }
 
-    public void setMaTk(String maTk) {
-        this.maTk = maTk;
+    public void setMaTk(int MaTk) {
+        this.MaTk = MaTk;
     }
 
     public String getTaiKhoan() {
@@ -54,21 +50,15 @@ public class TaiKhoan {
         this.Email = Email;
     }
 
-    public String getLoaiTaiKhoan() {
+    public boolean isLoaiTaiKhoan() {
         return LoaiTaiKhoan;
     }
 
-    public void setLoaiTaiKhoan(String LoaiTaiKhoan) {
+    public void setLoaiTaiKhoan(boolean LoaiTaiKhoan) {
         this.LoaiTaiKhoan = LoaiTaiKhoan;
     }
 
-    public Vector<Object> toDataRow() {
-        Vector<Object> row = new Vector<>();
-        row.add(maTk);
-        row.add(TaiKhoan);
-        row.add(MatKhau);
-        row.add(Email);
-        row.add(LoaiTaiKhoan);
-        return row;
+    public Object[] toDataRow() {
+        return new Object[]{getMaTk(), getTaiKhoan(), getMatKhau(), getEmail(), isLoaiTaiKhoan()};
     }
 }

@@ -1,25 +1,18 @@
 package DAO;
 
-import Helper.XJdbc;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
-public abstract class ManagerDAO<T, K> {
+public abstract class ManagerDAO<T, ID> {
 
-    protected abstract void insert(T entity);
+    public abstract void insert(T entity);
 
-    protected abstract void update(T entity);
+    public abstract void update(T entity);
 
-    protected abstract void delete(K id);
+    public abstract void delete(ID id);
 
-    protected abstract T selectById(K id);
+    public abstract T selectById(ID id);
 
-    protected abstract List<T> selectAll();
+    public abstract List<T> selectAll();
 
     protected abstract List<T> selectBySQL(String sql, Object... args);
-
-    // Các phương thức chung khác nếu cần
-
 }

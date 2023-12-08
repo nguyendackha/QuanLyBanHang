@@ -51,7 +51,7 @@ public class LichSuHoaDon extends javax.swing.JPanel {
     for (Entity.HoaDon hoaDon : hoaDonList) {
         Object[] item = new Object[9];
         item[0] = hoaDon.getMaHoaDon();
-        item[1] = hoaDon.getTenNhanVien();
+        item[1] = hoaDon.getMaNhanVien();
         item[2] = hoaDon.getTenKhachHang();
         item[3] = hoaDon.getNgayTao();
         item[4] = hoaDon.getNgayThanhToan();

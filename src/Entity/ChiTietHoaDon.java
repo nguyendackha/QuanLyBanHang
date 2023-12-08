@@ -1,16 +1,15 @@
 package Entity;
 
-import java.math.BigDecimal;
 
 public class ChiTietHoaDon {
-    private int maCTHoaDon;
-    private int maHoaDon;
-    private int maSanPham; 
+    private String maCTHoaDon;
+    private String maHoaDon;
+    private String maSanPham;
     private int soLuong;
-    private BigDecimal thanhTien;
+    private int thanhTien;
 
     // Constructors
-    public ChiTietHoaDon(int maCTHoaDon, int maHoaDon, int maSanPham, int soLuong, BigDecimal thanhTien) {
+    public ChiTietHoaDon(String maCTHoaDon, String maHoaDon, String maSanPham, int soLuong, int thanhTien) {
         this.maCTHoaDon = maCTHoaDon;
         this.maHoaDon = maHoaDon;
         this.maSanPham = maSanPham;
@@ -19,27 +18,27 @@ public class ChiTietHoaDon {
     }
 
     // Getter and Setter methods
-    public int getMaCTHoaDon() {
+    public String getMaCTHoaDon() {
         return maCTHoaDon;
     }
 
-    public void setMaCTHoaDon(int maCTHoaDon) {
+    public void setMaCTHoaDon(String maCTHoaDon) {
         this.maCTHoaDon = maCTHoaDon;
     }
 
-    public int getMaHoaDon() {
+    public String getMaHoaDon() {
         return maHoaDon;
     }
 
-    public void setMaHoaDon(int maHoaDon) {
+    public void setMaHoaDon(String maHoaDon) {
         this.maHoaDon = maHoaDon;
     }
 
-    public int getMaSanPham() {
+    public String getMaSanPham() {
         return maSanPham;
     }
 
-    public void setMaSanPham(int maSanPham) {
+    public void setMaSanPham(String maSanPham) {
         this.maSanPham = maSanPham;
     }
 
@@ -51,11 +50,11 @@ public class ChiTietHoaDon {
         this.soLuong = soLuong;
     }
 
-    public BigDecimal getThanhTien() {
+    public int getThanhTien() {
         return thanhTien;
     }
 
-    public void setThanhTien(BigDecimal thanhTien) {
+    public void setThanhTien(int thanhTien) {
         this.thanhTien = thanhTien;
     }
 }

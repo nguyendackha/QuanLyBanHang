@@ -7,7 +7,7 @@ import java.util.List;
 public class XJdbc {
 
     public static String driver = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
-    public static String dburl = "jdbc:sqlserver://LAPTOP-3JH297RQ\\NGUYENDACKHA:1433;databaseName=QuanLyBanHang;encrypt=false";
+    public static String dburl = "jdbc:sqlserver://LAPTOP-3JH297RQ\\NGUYENDACKHA:1433;databaseName=QuanLiBanHang;encrypt=false";
     public static String username = "sa";
     public static String password = "123456";
 

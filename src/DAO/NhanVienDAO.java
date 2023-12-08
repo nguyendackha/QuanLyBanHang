@@ -31,18 +31,17 @@ public class NhanVienDAO extends ManagerDAO<NhanVien, String> {
 
     @Override
     public void update(NhanVien entity) {
-       XJdbc.executeUpdate(UPDATE_SQL,
-        entity.getMaChucVu(),
-        entity.getTenNhanVien(),
-        entity.getNgaySinh(),
-        entity.getGioiTinh(),
-        entity.getSDT(),
-        entity.getDiaChi(),
-        entity.getImageNV(),
-        entity.getMaNhanVien());
-System.out.println("Cập nhật nhân viên thành công.");
+        XJdbc.executeUpdate(UPDATE_SQL,
+                entity.getMaChucVu(),
+                entity.getTenNhanVien(),
+                entity.getNgaySinh(),
+                entity.getGioiTinh(),
+                entity.getSDT(),
+                entity.getDiaChi(),
+                entity.getImageNV(),
+                entity.getMaNhanVien());
+        System.out.println("Cập nhật nhân viên thành công.");
     }
-
 
     @Override
     public void delete(String id) {
@@ -51,7 +50,7 @@ System.out.println("Cập nhật nhân viên thành công.");
 
     @Override
     public NhanVien selectById(String id) {
-        List<NhanVien> list = this.selectBySQL(SELECT_BY_ID_SQL, id);
+        List<NhanVien> list = selectBySQL(SELECT_BY_ID_SQL, id);
         if (list.isEmpty()) {
             return null;
         }
@@ -62,13 +61,14 @@ System.out.println("Cập nhật nhân viên thành công.");
     public List<NhanVien> selectAll() {
         return this.selectBySQL(SELECT_ALL_SQL);
     }
-    public List<NhanVien> getNhanVienByChucVu(int maChucVu) {
-    String sql = "SELECT * FROM NhanVien WHERE MaChucVu = ?";
-    return selectBySQL(sql, maChucVu);
-}
-        public NhanVien getNhanVienByTaiKhoan(String taiKhoan) {
+
+    public List<NhanVien> getNhanVienByChucVu(String maChucVu) {
+        String sql = "SELECT * FROM NhanVien WHERE MaChucVu = ?";
+        return selectBySQL(sql, maChucVu);
+    }
+
+    public NhanVien getNhanVienByTaiKhoan(String taiKhoan) {
         String sql = "SELECT * FROM NhanVien WHERE MaNhanVien IN (SELECT MaNhanVien FROM TaiKhoan WHERE TK = ?)";
-        
         try {
             List<NhanVien> list = this.selectBySQL(sql, taiKhoan);
             if (!list.isEmpty()) {
@@ -79,7 +79,7 @@ System.out.println("Cập nhật nhân viên thành công.");
         }
         return null;
     }
-        
+
     @Override
     protected List<NhanVien> selectBySQL(String sql, Object... args) {
         List<NhanVien> list = new ArrayList<>();
@@ -88,10 +88,10 @@ System.out.println("Cập nhật nhân viên thành công.");
             while (rs.next()) {
                 NhanVien entity = new NhanVien(
                         rs.getString("MaNhanVien"),
-                        rs.getInt("MaChucVu"),
+                        rs.getString("MaChucVu"),
                         rs.getString("TenNhanVien"),
-                        rs.getString("NgaySinh"),
-                        rs.getString("GioiTinh"),
+                        rs.getDate("NgaySinh"),
+                        rs.getBoolean("GioiTinh"),
                         rs.getString("SDT"),
                         rs.getString("DiaChi"),
                         rs.getString("imageNV"),

@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
- */
+
 package views;
 
 import DAO.ChucVuDAO;
@@ -29,11 +26,12 @@ import javax.swing.table.TableRowSorter;
 import com.toedter.calendar.JDateChooser;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import javax.swing.JFrame;
 /**
  *
  * @author ASUS
  */
-public class QLNV extends javax.swing.JPanel {
+public final class QLNV extends javax.swing.JPanel {
 private DefaultTableModel dtm = new DefaultTableModel();
 private DefaultTableModel dtm2 = new DefaultTableModel();
 private DefaultTableModel dtm3 = new DefaultTableModel();
@@ -45,6 +43,22 @@ private NhanVienDAO nhanVienDAO = new NhanVienDAO();
 private ChucVuDAO chucVuDAO = new ChucVuDAO();
 private JDateChooser txtNgaySinh;
 private String strHinhAnh = null;
+public static void main(String[] args) {
+        // Tạo một JFrame mới để chứa QLNV
+        JFrame frame = new JFrame("Quản Lý Nhân Viên");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        // Tạo một đối tượng QLNV
+        QLNV qlnvPanel = new QLNV();
+
+        // Thêm QLNV vào JFrame
+        frame.getContentPane().add(qlnvPanel);
+
+        // Cấu hình JFrame
+        frame.pack();
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
+    }
 
     /**
      * Creates new form NewJPanel
@@ -167,15 +181,9 @@ public QLNV() {
     NhanVien n = listNhanVien.get(index);
 
     // Convert String to Date
-    try {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        Date ngaySinhDate = dateFormat.parse(n.getNgaySinh());
-        txtNgaySinh.setDate(ngaySinhDate);
-    } catch (ParseException ex) {
-        ex.printStackTrace(); // Xử lý ngoại lệ theo ý 
-    }
+    txtNgaySinh.setDate(n.getNgaySinh());
 
-    if (n.getGioiTinh().equals("Nam")) {
+    if (n.getGioiTinh()) {
         rdoNam.setSelected(true);
     } else {
         rdoNu.setSelected(true);
@@ -187,8 +195,6 @@ public QLNV() {
     cbbMaCV.setSelectedItem(n.getMaChucVu());
     UpdateHinh(n.getImageNV());
 }
-
-
 
    private void fillData2(int index) {
     ChucVu c = listChucVu.get(index); 
@@ -207,89 +213,100 @@ public QLNV() {
         ImageIcon img = new ImageIcon(getClass().getResource("/HinhAnh/" + image));
         Image anh = img.getImage();
         ImageIcon icon = new ImageIcon(anh.getScaledInstance(lbImages.getWidth(),
-                lbImages.getHeight(), anh.SCALE_SMOOTH));
+        lbImages.getHeight(), anh.SCALE_SMOOTH));
         lbImages.setIcon(icon);
     }
 
-   private NhanVien getData() {
+  private NhanVien getData() {
     NhanVien n = new NhanVien();
-    if (txtMaNV.getText().trim().equals("")) {
+
+    if (txtMaNV.getText().trim().isEmpty()) {
         JOptionPane.showMessageDialog(this, "Mã nhân viên không được để trống");
         return null;
     }
     n.setMaNhanVien(txtMaNV.getText());
-    if (txtTen.getText().trim().equals("")) {
+
+    if (txtTen.getText().trim().isEmpty()) {
         JOptionPane.showMessageDialog(this, "Tên nhân viên không được để trống");
         return null;
     }
     n.setTenNhanVien(txtTen.getText());
-    if (txtDiaChi.getText().trim().equals("")) {
+
+    if (txtDiaChi.getText().trim().isEmpty()) {
         JOptionPane.showMessageDialog(this, "Địa chỉ nhân viên không được để trống");
         return null;
     }
     n.setDiaChi(txtDiaChi.getText());
-    if (txtSDT.getText().trim().equals("")) {
+
+    if (txtSDT.getText().trim().isEmpty()) {
         JOptionPane.showMessageDialog(this, "SĐT nhân viên không được để trống");
         return null;
     }
     n.setSDT(txtSDT.getText());
-    n.setMaChucVu((int) cbbMaCV.getSelectedItem());
-    
-    // Kiểm tra ngày sinh
-     Date ngaySinhDate = txtNgaySinh.getDate();
-    if (ngaySinhDate == null) {
-    JOptionPane.showMessageDialog(this, "Ngày sinh nhân viên không được để trống");
-    return null;
-}
-    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd"); // Định dạng ngày theo mong muốn
-    String ngaySinh = dateFormat.format(ngaySinhDate);
-    if (ngaySinh.isEmpty()) {
-    JOptionPane.showMessageDialog(this, "Ngày sinh nhân viên không được để trống");
-    return null;
-}
-   n.setNgaySinh(ngaySinh);
-// Tiếp tục xử lý
 
+    if (cbbMaCV.getSelectedItem() instanceof ChucVu) {
+        ChucVu selectedChucVu = (ChucVu) cbbMaCV.getSelectedItem();
+        n.setMaChucVu(selectedChucVu.getMaChucVu());
+    }
+
+    // Kiểm tra ngày sinh
+    Date ngaySinhDate = txtNgaySinh.getDate();
+    if (ngaySinhDate == null) {
+        JOptionPane.showMessageDialog(this, "Ngày sinh nhân viên không được để trống");
+        return null;
+    }
+
+    n.setNgaySinh(ngaySinhDate);
+
+    // Xử lý giới tính
     String gt = "Nam";
     if (rdoNam.isSelected()) {
-        n.setGioiTinh(gt);
+        n.setGioiTinh(true);
     } else {
         gt = "Nữ";
-        n.setGioiTinh(gt);
+        n.setGioiTinh(false);
     }
+
+    // Xử lý hình ảnh
     if (strHinhAnh == null) {
-        n.setImageNV("Loc.jpg");
+        n.setImageNV("Bo.jpg");
     } else {
         n.setImageNV(strHinhAnh);
     }
+
     return n;
 }
 
 
-    private ChucVu getData2() {
+
+        private ChucVu getData2() {
         ChucVu c = new ChucVu();
         if (txt_TenCV.getText().trim().equals("")) {
             JOptionPane.showMessageDialog(this, "Tên chức vụ không được để trống");
             return null;
         }
         c.setTenChucVu(txt_TenCV.getText());
+
         if (txt_Luong.getText().trim().equals("")) {
             JOptionPane.showMessageDialog(this, "Lương chức vụ không được để trống");
             return null;
         }
-        try{
-            double bien = Double.valueOf(txt_Luong.getText());
-        }catch(NumberFormatException e){
-            JOptionPane.showMessageDialog(this, "Lương chức vụ không được Nhập chữ");
-        }
-        if(Double.parseDouble(txt_Luong.getText()) <=0){
-            JOptionPane.showMessageDialog(this, "Lương chức vụ không được nhỏ hơn không");
+
+        try {
+            int luong = Integer.parseInt(txt_Luong.getText());
+            if (luong <= 0) {
+                JOptionPane.showMessageDialog(this, "Lương chức vụ không được nhỏ hơn hoặc bằng không");
+                return null;
+            }
+            c.setLuong(luong);
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Lương chức vụ không được nhập chữ");
             return null;
         }
-        double l = Double.valueOf(txt_Luong.getText());
-        c.setLuong(BigDecimal.valueOf(l));
+
         return c;
     }
+
     private void filter(String query) {
         TableRowSorter<DefaultTableModel> tr = new TableRowSorter<>(dtm);
         tblNhanVien.setRowSorter(tr);
@@ -871,25 +888,20 @@ public QLNV() {
     }//GEN-LAST:event_tblNhanVientblNhanVienMouseClicked
 
     private void lbImageslbImagesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbImageslbImagesMouseClicked
-        ChucVuDAO chucVuDAO = new ChucVuDAO();
-           int maChucVu = 1; // Đây là mã chức vụ cần tìm
-        String tenChucVu = chucVuDAO.getTenChucVuById(maChucVu);
-           System.out.println("Tên chức vụ: " + tenChucVu);
-
-
+String maChucVu = "1"; // Đây là mã chức vụ cần tìm
+String tenChucVu = chucVuDAO.getTenChucVuById(maChucVu);
+System.out.println("Tên chức vụ: " + tenChucVu);
     }//GEN-LAST:event_lbImageslbImagesMouseClicked
 
     private void cbbMaCVcbbMaCVActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbbMaCVcbbMaCVActionPerformed
         try {
-    int maChucVu = (int) cbbMaCV.getSelectedItem(); // Chắc chắn rằng cbbMaCV là JComboBox<Integer>
-    
+        String maChucVu = cbbMaCV.getSelectedItem().toString(); // Chắc chắn rằng cbbMaCV là JComboBox<String>
         ChucVuDAO chucVuDAO = new ChucVuDAO();
         String tenChucVu = chucVuDAO.getTenChucVuById(maChucVu);
-    
         txtTenChucVu.setText(tenChucVu);
-         } catch (Exception e) {
-           // Xử lý ngoại lệ nếu cần
-}
+    } catch (Exception e) {
+        // Xử lý ngoại lệ nếu cần
+    }
     }//GEN-LAST:event_cbbMaCVcbbMaCVActionPerformed
 
     private void tbl_ChucVuMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbl_ChucVuMouseClicked
@@ -912,46 +924,77 @@ public QLNV() {
     }//GEN-LAST:event_btnLuuActionPerformed
 
     private void btnSuaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSuaActionPerformed
-       if (txtMaNV.getText().trim().equals("")) {
+            if (txtMaNV.getText().trim().isEmpty()) {
         JOptionPane.showMessageDialog(this, "Mã nhân viên không được để trống");
         return;
     }
-       NhanVienDAO nhanVienDAO = new NhanVienDAO();
-       NhanVien existingNhanVien = nhanVienDAO.selectById(txtMaNV.getText());
-      if (existingNhanVien == null) {
-        JOptionPane.showMessageDialog(this, "Không tìm thấy nhân viên với mã " + txtMaNV.getText());
-        return;
-    } 
-      // Lấy thông tin từ giao diện
-      NhanVien updatedNhanVien = getData();
-        // Thực hiện cập nhật
-      nhanVienDAO.update(updatedNhanVien);
-      JOptionPane.showMessageDialog(this, "Cập nhật nhân viên thành công");
 
-// Hiển thị danh sách nhân viên sau khi cập nhật
-      List<NhanVien> listNhanVien = nhanVienDAO.selectAll();
+    try {
+        // Lấy mã nhân viên từ giao diện
+        String maNhanVien = txtMaNV.getText();
+
+        // Tạo đối tượng DAO và thực hiện lấy nhân viên theo mã
+        NhanVienDAO nhanVienDAO = new NhanVienDAO();
+        // Thay vì sử dụng selectById, bạn có thể sử dụng selectById của lớp cơ sở (ManagerDAO) để tránh code trùng lặp.
+        NhanVien existingNhanVien = nhanVienDAO.selectById(maNhanVien);
+
+        // Kiểm tra xem nhân viên có tồn tại không
+        if (existingNhanVien == null) {
+            JOptionPane.showMessageDialog(this, "Không tìm thấy nhân viên với mã " + maNhanVien);
+            return;
+        }
+
+        // Lấy thông tin từ giao diện
+        NhanVien updatedNhanVien = getData();
+
+        // Thực hiện cập nhật
+        nhanVienDAO.update(updatedNhanVien);
+        JOptionPane.showMessageDialog(this, "Cập nhật nhân viên thành công");
+
+        // Hiển thị danh sách nhân viên sau khi cập nhật
+        List<NhanVien> listNhanVien = nhanVienDAO.selectAll();
         ArrayList<NhanVien> arrayListNhanVien = new ArrayList<>(listNhanVien);
-          showData(arrayListNhanVien);     
+        showData(arrayListNhanVien);
+
+    } catch (NumberFormatException e) {
+        JOptionPane.showMessageDialog(this, "Mã nhân viên không hợp lệ");
+        return;
+    }
+
     }//GEN-LAST:event_btnSuaActionPerformed
 
     private void btnXoaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnXoaActionPerformed
-        if (txtMaNV.getText().trim().equals("")) {
-           JOptionPane.showMessageDialog(this, "Mã nhân viên không được để trống");
+         // Kiểm tra xem mã nhân viên có trống không
+    if (txtMaNV.getText().trim().isEmpty()) {
+        JOptionPane.showMessageDialog(this, "Mã nhân viên không được để trống");
+        return;
+    }
+    try {
+        // Lấy mã nhân viên từ giao diện
+        String maNhanVien = txtMaNV.getText();
+        // Tạo đối tượng DAO và thực hiện lấy nhân viên theo mã
+        NhanVienDAO nhanVienDAO = new NhanVienDAO();
+        NhanVien existingNhanVien = nhanVienDAO.selectById(maNhanVien);
+        // Kiểm tra xem nhân viên có tồn tại không
+        if (existingNhanVien == null) {
+            JOptionPane.showMessageDialog(this, "Không tìm thấy nhân viên với mã " + maNhanVien);
             return;
-}
-      NhanVienDAO nhanVienDAO = new NhanVienDAO();
-      NhanVien existingNhanVien = nhanVienDAO.selectById(txtMaNV.getText());
-      if (existingNhanVien == null) {
-         JOptionPane.showMessageDialog(this, "Không tìm thấy nhân viên với mã " + txtMaNV.getText());
-         return;
-}
-// Thực hiện xóa
-      nhanVienDAO.delete(txtMaNV.getText());
-// Cập nhật danh sách nhân viên sau khi xóa
-      List<NhanVien> listNhanVien = nhanVienDAO.selectAll();
-// Hiển thị danh sách
-     showData((ArrayList<NhanVien>) listNhanVien);
+        }
+        // Thực hiện xóa
+        nhanVienDAO.delete(maNhanVien);
+
+        // Cập nhật danh sách nhân viên sau khi xóa
+        List<NhanVien> listNhanVien = nhanVienDAO.selectAll();
+
+        // Hiển thị danh sách
+        showData((ArrayList<NhanVien>) listNhanVien);
+
         JOptionPane.showMessageDialog(this, "Xóa nhân viên thành công");
+
+    } catch (NumberFormatException e) {
+        JOptionPane.showMessageDialog(this, "Mã nhân viên không hợp lệ");
+        return;
+    }
     }//GEN-LAST:event_btnXoaActionPerformed
 
     private void btnThemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnThemActionPerformed
@@ -960,25 +1003,35 @@ public QLNV() {
     }//GEN-LAST:event_btnThemActionPerformed
 
     private void btn_ShowActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_ShowActionPerformed
-       if (txt_MaCV.getText().trim().equals("")) {
-    JOptionPane.showMessageDialog(this, "Mã nhân viên không được để trống");
-    return;
-}
+        // Kiểm tra xem mã chức vụ có trống không
+    if (txt_MaCV.getText().trim().isEmpty()) {
+        JOptionPane.showMessageDialog(this, "Mã chức vụ không được để trống");
+        return;
+    }
 
-       ChucVuDAO chucVuDAO = new ChucVuDAO();
-       ChucVu existingChucVu = chucVuDAO.selectById(Integer.parseInt(txt_MaCV.getText()));
+    try {
+        // Lấy mã chức vụ từ giao diện
+        String maChucVu = txt_MaCV.getText();
 
-       if (existingChucVu == null) {
-            JOptionPane.showMessageDialog(this, "Không tìm thấy chức vụ với mã " + txt_MaCV.getText());
+        // Tạo đối tượng DAO và thực hiện lấy chức vụ theo mã
+        ChucVuDAO chucVuDAO = new ChucVuDAO();
+        ChucVu existingChucVu = chucVuDAO.selectById(maChucVu);
+
+        // Kiểm tra xem chức vụ có tồn tại không
+        if (existingChucVu == null) {
+            JOptionPane.showMessageDialog(this, "Không tìm thấy chức vụ với mã " + maChucVu);
             return;
-}
+        }
 
-// Lấy danh sách nhân viên theo chức vụ
-      List<NhanVien> listNhanVien = nhanVienDAO.getNhanVienByChucVu(existingChucVu.getMaChucVu());
+        // Lấy danh sách nhân viên theo chức vụ
+        List<NhanVien> listNhanVien = nhanVienDAO.getNhanVienByChucVu(existingChucVu.getMaChucVu());
 
-// Hiển thị danh sách
-      showData3((ArrayList<NhanVien>) listNhanVien);
-
+        // Hiển thị danh sách
+        showData3((ArrayList<NhanVien>) listNhanVien);
+    } catch (NumberFormatException e) {
+        JOptionPane.showMessageDialog(this, "Mã chức vụ không hợp lệ");
+        return;
+    }
     }//GEN-LAST:event_btn_ShowActionPerformed
 
     private void tbl_NhanVienMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbl_NhanVienMouseClicked
@@ -991,28 +1044,38 @@ public QLNV() {
     }//GEN-LAST:event_btn_ThemActionPerformed
 
     private void btn_SuaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_SuaActionPerformed
-         if (txt_MaCV.getText().trim().equals("")) {
+          // Kiểm tra xem mã chức vụ có trống không
+    if (txt_MaCV.getText().trim().isEmpty()) {
         JOptionPane.showMessageDialog(this, "Mã chức vụ không được để trống");
         return;
     }
 
-    ChucVuDAO chucVuDAO = new ChucVuDAO();
-    ChucVu existingChucVu = chucVuDAO.selectById(Integer.parseInt(txt_MaCV.getText()));
-    if (existingChucVu == null) {
-        JOptionPane.showMessageDialog(this, "Không tìm thấy chức vụ với mã " + txt_MaCV.getText());
+    try {
+        // Lấy mã chức vụ từ giao diện
+        String maChucVu = txt_MaCV.getText();
+
+        ChucVuDAO chucVuDAO = new ChucVuDAO();
+        ChucVu existingChucVu = chucVuDAO.selectById(maChucVu);
+
+        if (existingChucVu == null) {
+            JOptionPane.showMessageDialog(this, "Không tìm thấy chức vụ với mã " + maChucVu);
+            return;
+        }
+
+        // Lấy thông tin từ giao diện
+        ChucVu updatedChucVu = getData2();
+
+        // Thực hiện cập nhật
+        chucVuDAO.update(updatedChucVu);
+
+        // Hiển thị thông tin sau khi cập nhật
+        list = chucVuDAO.selectAll();
+        JOptionPane.showMessageDialog(this, "Cập nhật chức vụ thành công");
+        showData2(list);
+    } catch (NumberFormatException e) {
+        JOptionPane.showMessageDialog(this, "Mã chức vụ không hợp lệ");
         return;
     }
-
-    // Lấy thông tin từ giao diện
-    ChucVu updatedChucVu = getData2();
-
-    // Thực hiện cập nhật
-    chucVuDAO.update(updatedChucVu);
-
-    // Hiển thị thông tin sau khi cập nhật
-    list = chucVuDAO.selectAll();
-    JOptionPane.showMessageDialog(this, "Cập nhật chức vụ thành công");
-    showData2(list);
     }//GEN-LAST:event_btn_SuaActionPerformed
 
     private void btn_LuuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_LuuActionPerformed
@@ -1032,48 +1095,68 @@ public QLNV() {
     }//GEN-LAST:event_btn_LuuActionPerformed
 
     private void btn_XoaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_XoaActionPerformed
-      if (txt_MaCV.getText().trim().equals("")) {
+          if (txt_MaCV.getText().trim().equals("")) {
         JOptionPane.showMessageDialog(this, "Mã chức vụ không được để trống");
         return;
     }
 
-    ChucVuDAO chucVuDAO = new ChucVuDAO();
-    ChucVu existingChucVu = chucVuDAO.selectById(Integer.parseInt(txt_MaCV.getText()));
-    if (existingChucVu == null) {
-        JOptionPane.showMessageDialog(this, "Không tìm thấy chức vụ với mã " + txt_MaCV.getText());
+    try {
+        // Chuyển đổi mã chức vụ từ String sang int
+        String maChucVu = (txt_MaCV.getText());
+
+        ChucVuDAO chucVuDAO = new ChucVuDAO();
+        ChucVu existingChucVu = chucVuDAO.selectById(maChucVu);
+
+        if (existingChucVu == null) {
+            JOptionPane.showMessageDialog(this, "Không tìm thấy chức vụ với mã " + maChucVu);
+            return;
+        }
+
+        // Thực hiện xóa
+        chucVuDAO.delete(existingChucVu.getMaChucVu());
+
+        // Hiển thị thông tin sau khi xóa
+        list = chucVuDAO.selectAll();
+        JOptionPane.showMessageDialog(this, "Xóa chức vụ thành công");
+        showData2(list);
+    } catch (NumberFormatException e) {
+        JOptionPane.showMessageDialog(this, "Mã chức vụ không hợp lệ");
         return;
     }
-
-    // Thực hiện xóa
-    chucVuDAO.delete(existingChucVu.getMaChucVu());
-
-    // Hiển thị thông tin sau khi xóa
-    list = chucVuDAO.selectAll();
-    JOptionPane.showMessageDialog(this, "Xóa chức vụ thành công");
-    showData2(list);
 
     }//GEN-LAST:event_btn_XoaActionPerformed
 
     private void btn_XoaSPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_XoaSPActionPerformed
-      if (txt_MaNV.getText().equals("")) {
+          if (txt_MaNV.getText().equals("")) {
         JOptionPane.showMessageDialog(this, "Mã nhân viên không được để trống");
         return;
     }
 
-    NhanVienDAO nhanVienDAO = new NhanVienDAO();
-    NhanVien existingNhanVien = nhanVienDAO.selectById(txt_MaNV.getText());
-    if (existingNhanVien == null) {
-        JOptionPane.showMessageDialog(this, "Không tìm thấy nhân viên với mã " + txt_MaNV.getText());
-        return;
-    }
+    try {
+        // Chuyển đổi mã nhân viên từ String sang int
+        String maNhanVien = (txt_MaNV.getText());
 
-    // Thực hiện xóa
-    nhanVienDAO.delete(existingNhanVien.getMaNhanVien());
+        NhanVienDAO nhanVienDAO = new NhanVienDAO();
 
-    // Hiển thị thông tin sau khi xóa
-    listNhanVien = nhanVienDAO.selectAll();
+        NhanVien existingNhanVien = nhanVienDAO.selectById(maNhanVien);
+
+        if (existingNhanVien == null) {
+            JOptionPane.showMessageDialog(this, "Không tìm thấy nhân viên với mã " + maNhanVien);
+            return;
+        }
+
+        // Thực hiện xóa
+        nhanVienDAO.delete(maNhanVien);
+
+        // Hiển thị thông tin sau khi xóa
+        listNhanVien = nhanVienDAO.selectAll();
         JOptionPane.showMessageDialog(this, "Xóa nhân viên thành công");
         showData((ArrayList<NhanVien>) listNhanVien);
+
+    } catch (NumberFormatException e) {
+        JOptionPane.showMessageDialog(this, "Mã nhân viên không hợp lệ");
+        return;
+    }
     }//GEN-LAST:event_btn_XoaSPActionPerformed
 
     private void txtTimKiemKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtTimKiemKeyReleased

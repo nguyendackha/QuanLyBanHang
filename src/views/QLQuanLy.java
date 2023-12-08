@@ -50,7 +50,7 @@ public class QLQuanLy extends javax.swing.JFrame {
             // (Chú ý: Đây chỉ là một giả định, bạn cần cung cấp các phương thức thích hợp trong lớp DanhMucDAO)
 
             JPanel jpn = new JPanel(); // Thay thế bằng phương thức cụ thể trong lớp DanhMucDAO
-            JLabel jlb = new JLabel(danhMuc.getTenSanPham()); // Thay thế bằng phương thức cụ thể trong lớp DanhMuc
+            JLabel jlb = new JLabel(danhMuc.getTenDanhMuc()); // Thay thế bằng phương thức cụ thể trong lớp DanhMuc
             // Thêm sự kiện cho từng danh mục
             jpn.addMouseListener(new java.awt.event.MouseAdapter() {
                 public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -59,7 +59,7 @@ public class QLQuanLy extends javax.swing.JFrame {
              getContentPane().add(jpn);
              getContentPane().add(jlb);
                     // Ví dụ: Hiển thị thông tin của danh mục
-                    System.out.println("Selected Category: " + danhMuc.getTenSanPham());
+                    System.out.println("Selected Category: " + danhMuc.getTenDanhMuc());
                 }
             });
             // Thêm jpn và jlb vào giao diện của bạn (ví dụ: jpnMainPanel.add(jpn);)

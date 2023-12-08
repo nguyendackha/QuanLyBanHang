@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
- */
+
 package views;
 
 import DAO.ChiTietHoaDonDAO;
@@ -19,6 +16,7 @@ import java.util.Calendar;
 import java.util.List;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import net.sf.jasperreports.engine.util.DisplayValue;
@@ -34,6 +32,22 @@ public DefaultTableModel dtm = new DefaultTableModel();
 public ArrayList<ChiTietHoaDon> listChiTietHoaDon = new ArrayList<>();
 public ChiTietHoaDonDAO chiTietHoaDonDAO = new ChiTietHoaDonDAO();
 public List<ChiTietHoaDonDAO> listChiTietHoaDonDAO;
+public static void main(String[] args) {
+        // Tạo một JFrame mới để chứa SanPhamPanel
+        JFrame frame = new JFrame("Quản Lý Hóa Đơn");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        // Tạo một đối tượng SanPhamPanel
+        HoaDon hoaDon = new HoaDon();
+
+        // Thêm SanPhamPanel vào JFrame
+        frame.getContentPane().add(hoaDon);
+
+        // Cấu hình JFrame
+        frame.pack();
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
+    }
 
 
     /**
@@ -140,8 +154,8 @@ public List<ChiTietHoaDonDAO> listChiTietHoaDonDAO;
 
    public void LayDuLieuChiTietHoaDon(String MaHoaDon) {
     // Sử dụng ChiTietHoaDonDAO để lấy dữ liệu từ cơ sở dữ liệu
-   int maHoaDon = Integer.parseInt(MaHoaDon);
-   List<ChiTietHoaDon> chiTietHoaDonList = chiTietHoaDonDAO.selectByMaHoaDon(maHoaDon);
+    String maHoaDon = MaHoaDon; // giữ nguyên kiểu String nếu MaHoaDon đã là String
+    List<ChiTietHoaDon> chiTietHoaDonList = chiTietHoaDonDAO.selectByMaHoaDon(maHoaDon);
   
 
     Object[] obj = new Object[]{"Mã CTHD", "Mã HD", "Sản Phẩm", "Số Lượng", "Thành tiền"};
@@ -288,24 +302,23 @@ public void setTongTien(String maHoaDon, String par) {
         // LayDuLieuHoaDon();
     }
 }
-
-
-
-
-
-
-   public int getGiaSanPham(String maSP) {
+  public String getGiaSanPham(String maSanPham) {
     SanPhamDAO sanPhamDAO = new SanPhamDAO();
-    int gia = 0;
-    int intMaSP = Integer.parseInt(maSP);
-    SanPham sanPham = sanPhamDAO.selectById(intMaSP);
-    if (sanPham != null) {
-        gia = sanPham.getGiaTien();
-    }
+    String gia = ""; // Giá trị mặc định nếu không tìm thấy sản phẩm
+    try {
+        // Mã sản phẩm là chuỗi, không phải số nguyên
+        SanPham sanPham = sanPhamDAO.selectById(maSanPham);
 
+        // Kiểm tra xem sản phẩm có tồn tại không
+        if (sanPham != null) {
+            gia = String.valueOf(sanPham.getGiaTien());
+        }
+    } catch (NumberFormatException e) {
+        // Xử lý nếu mã sản phẩm không phải là số nguyên
+        e.printStackTrace();
+    }
     return gia;
 }
-
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -686,35 +699,41 @@ public void setTongTien(String maHoaDon, String par) {
     }//GEN-LAST:event_btnThemActionPerformed
 
     private void btnLuuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLuuActionPerformed
-             String MaHoaDon, MaSanPham, SoLuong, TongTien, maCTHD;
-        maCTHD = txt_MaCTHD.getText();
-        MaHoaDon = txt_MaHD.getText();
-        MaSanPham = cbb_SanPham.getSelectedItem().toString(); // Lấy giá trị từ cbb_SanPham
-        SoLuong = txt_SoLuong.getText();
-        TongTien = txt_ThanhTien.getText();
+    String maCTHoaDon, maHoaDon, maSanPham, soLuong, thanhTien;
+    maCTHoaDon = txt_MaCTHD.getText();
+    maHoaDon = txt_MaHD.getText();
+    maSanPham = cbb_SanPham.getSelectedItem().toString(); // Lấy giá trị từ cbb_SanPham
+    soLuong = txt_SoLuong.getText();
+    thanhTien = txt_ThanhTien.getText();
 
-        if (checkValidateForm()) {
-            String tenMA = MaSanPham;
-            String role = checkLogin(Integer.parseInt(tenMA));
-            if (role != null) {
-                JOptionPane.showMessageDialog(this, "Đã có sản phẩm");
-            } else {
-                String cautruyvan = "insert into ChiTietHoaDon(MaHoaDon, MaSanPham, SoLuong, ThanhTien) values(" + MaHoaDon + ",'" + MaSanPham + "'," + SoLuong + "," + TongTien + ")";
-                boolean kiemtra = KiemTraNhapChiTietHoaDon(0);
-                if (kiemtra) {
-                    JOptionPane.showMessageDialog(this, "Đã Lưu thành công");
-                } else {
-                    JOptionPane.showMessageDialog(this, "Lưu thất bại");
-                    LayDuLieuHoaDon();
-                }
-            }
-        }
+   if (checkValidateForm()) {
+    ChiTietHoaDonDAO chiTietHoaDonDAO = new ChiTietHoaDonDAO();
+
+    // Kiểm tra xem sản phẩm đã có trong hóa đơn chưa
+    ChiTietHoaDon existingChiTiet = chiTietHoaDonDAO.selectById(maCTHoaDon);
+    if (existingChiTiet != null) {
+        JOptionPane.showMessageDialog(this, "Đã có sản phẩm trong hóa đơn");
+    } else {
+        // Tạo đối tượng ChiTietHoaDon mới và set giá trị
+        ChiTietHoaDon chiTietHoaDon = new ChiTietHoaDon(maCTHoaDon, maHoaDon, maSanPham, Integer.parseInt(soLuong), Integer.parseInt(thanhTien));
+
+        // Thực hiện thêm ChiTietHoaDon
+        chiTietHoaDonDAO.insert(chiTietHoaDon);
+        
+        // Hiển thị thông báo sau khi thêm thành công
+        JOptionPane.showMessageDialog(this, "Đã Lưu thành công");
+
+        // Cập nhật lại dữ liệu hiển thị
+        LayDuLieuHoaDon();
+    }
+}
+
 
     }//GEN-LAST:event_btnLuuActionPerformed
 
     private void btnSuaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSuaActionPerformed
-           String MaHD, TenKH, TongTien, tt, ct;
-        MaHD = txtMaHoaDon.getText();
+        String MaHoaDon, TenKH, TongTien, tt, ct;
+        MaHoaDon = txtMaHoaDon.getText();
         TenKH = txtTenKH.getText();
         TongTien = txtTongTien.getText();
         ct = jTextArea1.getText();
@@ -725,23 +744,24 @@ public void setTongTien(String maHoaDon, String par) {
             tt = "Chưa thanh toán";
         }
 
-        HoaDonDAO hoaDonDAO = new HoaDonDAO(); // Khởi tạo đối tượng DAO
-            Entity.HoaDon hoaDonToUpdate = hoaDonDAO.selectById(Integer.parseInt(MaHD)); // Lấy thông tin hóa đơn cần cập nhật
+            HoaDonDAO hoaDonDAO = new HoaDonDAO(); // Khởi tạo đối tượng DAO
+         Entity.HoaDon hoaDonToUpdate = hoaDonDAO.selectById(MaHoaDon); // Lấy thông tin hóa đơn cần cập nhật
 
-        if (hoaDonToUpdate != null) {
-            // Cập nhật thông tin hóa đơn
-            hoaDonToUpdate.setTenKhachHang(TenKH);
-            hoaDonToUpdate.setTongTien(new BigDecimal(TongTien));
-            hoaDonToUpdate.setTrangThai(tt);
-            hoaDonToUpdate.setGhiChu(ct);
+    if (hoaDonToUpdate != null) {
+        // Cập nhật thông tin hóa đơn
+        hoaDonToUpdate.setTenKhachHang(TenKH);
+        hoaDonToUpdate.setTongTien(Integer.parseInt(TongTien));
+        hoaDonToUpdate.setTrangThai(tt.equals("Đã thanh toán")); // Sửa ở đây
+        hoaDonToUpdate.setGhiChu(ct);
 
-            // Thực hiện cập nhật hóa đơn
-            hoaDonDAO.update(hoaDonToUpdate);
-            JOptionPane.showMessageDialog(this, "Đã sửa Thành Công");
-            LayDuLieuHoaDon(); // Nếu cần, cập nhật giao diện hiển thị sau khi cập nhật dữ liệu
-        } else {
-            ThongBao("Không thể ", "Sửa Hóa Đơn", 2);
-        }
+        // Thực hiện cập nhật hóa đơn
+        hoaDonDAO.update(hoaDonToUpdate);
+        JOptionPane.showMessageDialog(this, "Đã sửa Thành Công");
+        LayDuLieuHoaDon(); // Nếu cần, cập nhật giao diện hiển thị sau khi cập nhật dữ liệu
+    } else {
+        ThongBao("Không thể ", "Sửa Hóa Đơn", 2);
+    }
+
 
     }//GEN-LAST:event_btnSuaActionPerformed
 
@@ -777,44 +797,52 @@ public void setTongTien(String maHoaDon, String par) {
     );
 }
 
-public String checkLogin(int TenSP) {
+public String checkLogin(String TenSanPham) {
     ChiTietHoaDonDAO chiTietHoaDonDAO = new ChiTietHoaDonDAO();
 
     for (ChiTietHoaDon chiTietHoaDon : chiTietHoaDonDAO.selectAll()) {
-        int maSanPham = chiTietHoaDon.getMaSanPham();
-        if (maSanPham == TenSP) {
-            return String.valueOf(maSanPham);
+        String maSanPham = chiTietHoaDon.getMaSanPham();
+        if (maSanPham.equals(TenSanPham)) {
+            return maSanPham;
         }
     }
     return null;
 }
 
-    private void btn_LuuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_LuuActionPerformed
-             String MaHoaDon, MaSanPham, SoLuong, TongTien, maCTHD;
-        maCTHD = txt_MaCTHD.getText();
-        MaHoaDon = txt_MaHD.getText();
-        MaSanPham = (String) cbb_SanPham.getSelectedItem(); // Thay thế GetCbbSelected
-        SoLuong = txt_SoLuong.getText();
-        TongTien = txt_ThanhTien.getText();
-        if (checkValidateForm()) {
-            String tenMA = (String) MaSanPham;
-            String role = checkLogin(Integer.parseInt(tenMA));
-            if (role != null) {
-                JOptionPane.showMessageDialog(this, "Đã có sản phẩm");
-            } else {
 
-                String cautruyvan = "insert into ChiTietHoaDon(MaHoaDon, MaSanPham, SoLuong, ThanhTien) values(" + MaHoaDon + "," + MaSanPham + "," + SoLuong + "," + TongTien + ")";
-                boolean kiemtra = KiemTraNhapChiTietHoaDon(0);
-                if (kiemtra) {
-                    // Bạn có thể thực hiện các hành động khác ở đây nếu cần
-                    JOptionPane.showMessageDialog(this, "Đã Lưu thành công");
-                } else {
-                    JOptionPane.showMessageDialog(this, "Lưu thất bại");
-                }
-            }
+    private void btn_LuuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_LuuActionPerformed
+    String maCTHoaDon, maHoaDon, maSanPham;
+    int soLuong, tongTien;
+    maCTHoaDon = txt_MaCTHD.getText();
+    maHoaDon = txt_MaHD.getText();
+    maSanPham = (String) cbb_SanPham.getSelectedItem(); // Thay thế GetCbbSelected
+    soLuong = Integer.parseInt(txt_SoLuong.getText()); // Chuyển đổi thành số nguyên
+    tongTien = Integer.parseInt(txt_ThanhTien.getText()); // Chuyển đổi thành số nguyên
+
+    if (checkValidateForm()) {
+        ChiTietHoaDonDAO chiTietHoaDonDAO = new ChiTietHoaDonDAO();
+
+        // Kiểm tra xem sản phẩm đã có trong hóa đơn chưa
+        String role = checkLogin(maSanPham);
+        if (role != null) {
+            JOptionPane.showMessageDialog(this, "Sản phẩm đã có trong hóa đơn");
+        } else {
+            // Tạo đối tượng ChiTietHoaDon mới và set giá trị
+            ChiTietHoaDon chiTietHoaDon = new ChiTietHoaDon(maCTHoaDon, maHoaDon, maSanPham, soLuong, tongTien);
+
+            // Thực hiện thêm ChiTietHoaDon
+            chiTietHoaDonDAO.insert(chiTietHoaDon);
+
+            // Hiển thị thông báo sau khi thêm thành công
+            JOptionPane.showMessageDialog(this, "Đã Lưu thành công");
         }
-        LayDuLieuChiTietHoaDon(MaHoaDon);
-        setTongTien(MaHoaDon, null); // Hoặc bạn có thể truyền giá trị mặc định nếu cần thiết
+    }
+
+    // Cập nhật lại dữ liệu hiển thị và tổng tiền
+    LayDuLieuChiTietHoaDon(maHoaDon);
+    setTongTien(maHoaDon, null); // Hoặc bạn có thể truyền giá trị mặc định nếu cần thiết
+
+
     }//GEN-LAST:event_btn_LuuActionPerformed
 
     private void btn_SuaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_SuaActionPerformed
@@ -852,20 +880,21 @@ public String checkLogin(int TenSP) {
     }//GEN-LAST:event_btn_XoaActionPerformed
 
     private void txt_SoLuongKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_SoLuongKeyReleased
-      int SoLuong = 0;
-double Tien = 0;
-try {
-    SoLuong = Integer.parseInt(txt_SoLuong.getText()); // Sử dụng parseInt thay vì valueOf
-} catch (NumberFormatException e) {
-    e.printStackTrace();
-}
+         int SoLuong = 0;
+    int Tien = 0;  // Chuyển Tien từ double sang int
+    try {
+        SoLuong = Integer.parseInt(txt_SoLuong.getText());
+    } catch (NumberFormatException e) {
+        e.printStackTrace();
+    }
 
-// Bỏ GetGiaSanPham và GetCbbSelected
-// Giả sử GiaSanPham và MaSanPham là hai biến đã được định nghĩa trước đó
-String MaSanPham = "GiaTriCuaMaSanPham";
-int GiaSanPham = getGiaSanPham(MaSanPham);
+    // Bỏ GetGiaSanPham và GetCbbSelected
+    // Giả sử GiaSanPham và MaSanPham là hai biến đã được định nghĩa trước đó
+    String MaSanPham = "GiaTriCuaMaSanPham";
+        String GiaSanPham = getGiaSanPham(MaSanPham);
 
-txt_ThanhTien.setText(String.valueOf(Tien));
+    txt_ThanhTien.setText(String.valueOf(Tien));
+
 
     }//GEN-LAST:event_txt_SoLuongKeyReleased
 

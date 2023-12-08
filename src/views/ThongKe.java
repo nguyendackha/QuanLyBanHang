@@ -19,8 +19,10 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.table.DefaultTableModel;
+
 
 
 /**
@@ -34,6 +36,22 @@ public final class ThongKe extends javax.swing.JPanel {
     private DefaultComboBoxModel boxModel = new DefaultComboBoxModel();
     private SanPhamDAO sanPhamDAO = new SanPhamDAO();
     private ThongKeDAO thongKeDAO = new ThongKeDAO();
+    public static void main(String[] args) {
+        // Tạo một JFrame mới để chứa QLNV
+        JFrame frame = new JFrame("Quản Lý Thống Kê");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        // Tạo một đối tượng QLNV
+        ThongKe thongKe = new ThongKe();
+
+        // Thêm QLNV vào JFrame
+        frame.getContentPane().add(thongKe);
+
+        // Cấu hình JFrame
+        frame.pack();
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
+    }
 
 
     /**

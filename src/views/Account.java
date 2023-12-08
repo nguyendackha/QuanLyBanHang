@@ -8,6 +8,7 @@ import DAO.TaiKhoanDAO;
 import Entity.TaiKhoan;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -18,9 +19,25 @@ import javax.swing.table.DefaultTableModel;
  */
 public class Account extends javax.swing.JPanel {
 
-    private DefaultTableModel dtm = new DefaultTableModel();
+private DefaultTableModel dtm = new DefaultTableModel();
 private ArrayList<TaiKhoan> listTaiKhoan = new ArrayList<>();
 private TaiKhoanDAO taiKhoanDAO = new TaiKhoanDAO();
+public static void main(String[] args) {
+        // Tạo một JFrame mới để chứa SanPhamPanel
+        JFrame frame = new JFrame("Quản Lý Tài Khoản");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        // Tạo một đối tượng TaiKhoan
+        Account taiKhoan = new Account();
+
+        // Thêm Account vào JFrame
+        frame.getContentPane().add(taiKhoan);
+
+        // Cấu hình JFrame
+        frame.pack();
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
+    }
 
     /**
      * Creates new form TaiKhoan
@@ -74,48 +91,45 @@ private TaiKhoanDAO taiKhoanDAO = new TaiKhoanDAO();
 private void fillData(int index) {
     TaiKhoan t = listTaiKhoan.get(index);
     txtEmail.setText(t.getEmail());
-    if (t.getLoaiTaiKhoan().equals("QL")) {
+    if (t.isLoaiTaiKhoan()) {
         cbbLoaiTK.setSelectedIndex(0);
     } else {
         cbbLoaiTK.setSelectedIndex(1);
     }
     txtMK.setText(t.getMatKhau());
     txtTK.setText(t.getTaiKhoan());
-    txtMa.setText(t.getMaTk());
+    txtMa.setText(String.valueOf(t.getMaTk())); // Chuyển đổi int sang String
 }
 
 
+
     private TaiKhoan getData() {
-        TaiKhoan t = new TaiKhoan();
-        if(txtMa.getText().trim().equals("")){
-            JOptionPane.showMessageDialog(this, "Mã tài khoản không được để trống");
-            return null;
-        }
-        t.setMaTk(txtTK.getText());
-        if(txtMa.getText().trim().equals("")){
-            JOptionPane.showMessageDialog(this, "Tài khoản không được để trống");
-            return null;
-        }
-        t.setTaiKhoan(txtTK.getText());
-        if(txtMK.getText().trim().equals("")){
-            JOptionPane.showMessageDialog(this, "Mật khẩu không được để trống");
-            return null;
-        }
-        t.setMatKhau(txtMK.getText());
-        if(txtEmail.getText().trim().equals("")){
-            JOptionPane.showMessageDialog(this, "Email tài khoản không được để trống");
-            return null;
-        }
-        t.setEmail(txtEmail.getText());
-        String loai = "QL";
-        if (cbbLoaiTK.getSelectedItem().equals("QL")) {
-            t.setLoaiTaiKhoan(loai);
-        } else {
-            loai = "NV";
-            t.setLoaiTaiKhoan(loai);
-        }
-        return t;
+    TaiKhoan t = new TaiKhoan();
+    if (txtMa.getText().trim().equals("")) {
+        JOptionPane.showMessageDialog(this, "Mã tài khoản không được để trống");
+        return null;
     }
+    t.setMaTk(Integer.parseInt(txtMa.getText())); // Chuyển đổi từ chuỗi sang int
+    if (txtTK.getText().trim().equals("")) {
+        JOptionPane.showMessageDialog(this, "Tài khoản không được để trống");
+        return null;
+    }
+    t.setTaiKhoan(txtTK.getText());
+    if (txtMK.getText().trim().equals("")) {
+        JOptionPane.showMessageDialog(this, "Mật khẩu không được để trống");
+        return null;
+    }
+    t.setMatKhau(txtMK.getText());
+    if (txtEmail.getText().trim().equals("")) {
+        JOptionPane.showMessageDialog(this, "Email tài khoản không được để trống");
+        return null;
+    }
+    t.setEmail(txtEmail.getText());
+    boolean loai = cbbLoaiTK.getSelectedItem().equals("QL");
+    t.setLoaiTaiKhoan(loai);
+    return t;
+}
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -260,22 +274,38 @@ private void fillData(int index) {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnSuaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSuaActionPerformed
-       if (txtMa.getText().trim().equals("")) {
+           if (txtMa.getText().trim().equals("")) {
         JOptionPane.showMessageDialog(this, "Mã tài khoản không được để trống");
         return;
     }
-    // Kiểm tra xem tài khoản có tồn tại không
-            TaiKhoan existingTaiKhoan = taiKhoanDAO.selectById(txtMa.getText());
-            if (existingTaiKhoan == null) {
-           JOptionPane.showMessageDialog(this, "Không tìm thấy tài khoản có mã: " + txtMa.getText());
-          return;
+
+    // Chuyển đổi mã tài khoản từ String sang int (nếu có thể)
+    int maTaiKhoan;
+    try {
+        maTaiKhoan = Integer.parseInt(txtMa.getText());
+    } catch (NumberFormatException e) {
+        JOptionPane.showMessageDialog(this, "Mã tài khoản không hợp lệ");
+        return;
     }
-             taiKhoanDAO.update(getData());
+
+    // Kiểm tra xem tài khoản có tồn tại không
+    TaiKhoan existingTaiKhoan = taiKhoanDAO.selectById(maTaiKhoan);
+
+    if (existingTaiKhoan == null) {
+        JOptionPane.showMessageDialog(this, "Không tìm thấy tài khoản có mã: " + maTaiKhoan);
+        return;
+    }
+
+    // Tiếp tục xử lý nếu tất cả là hợp lệ
+    taiKhoanDAO.update(getData());
+
     // Hiển thị thông báo
-         JOptionPane.showMessageDialog(this, "Tài khoản đã được cập nhật thành công.");
+    JOptionPane.showMessageDialog(this, "Tài khoản đã được cập nhật thành công.");
+
     // Cập nhật danh sách tài khoản
-             listTaiKhoan = (ArrayList<TaiKhoan>) taiKhoanDAO.selectAll();
-                      showData(listTaiKhoan);
+    listTaiKhoan = new ArrayList<>(taiKhoanDAO.selectAll());
+    showData(listTaiKhoan);
+
     }//GEN-LAST:event_btnSuaActionPerformed
 
     private void tblTaiKhoanMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblTaiKhoanMouseClicked
@@ -303,23 +333,27 @@ private void fillData(int index) {
     JOptionPane.showMessageDialog(this, "Mã tài khoản không được để trống");
     return;
 }
-        List<TaiKhoan> listTaiKhoanDAO = null;
 
-// Lấy mã tài khoản cần xóa từ danh sách hiện tại
-           String maTaiKhoanCanXoa = listTaiKhoanDAO.get(tblTaiKhoan.getSelectedRow()).getMaTk();
+List<TaiKhoan> listTaiKhoanDAO = null;
 
-// Thực hiện xóa tài khoản
-           taiKhoanDAO.delete(maTaiKhoanCanXoa);
+try {
+    // Lấy mã tài khoản cần xóa từ danh sách hiện tại
+    int selectedIndex = tblTaiKhoan.getSelectedRow();
+    if (selectedIndex == -1) {
+        JOptionPane.showMessageDialog(this, "Vui lòng chọn một dòng để xóa");
+        return;
+    }
+    int maTaiKhoanCanXoa = listTaiKhoanDAO.get(selectedIndex).getMaTk();
+    // Thực hiện xóa tài khoản
+    taiKhoanDAO.delete(maTaiKhoanCanXoa);
     JOptionPane.showMessageDialog(this, "Xóa tài khoản thành công");
-
-// Cập nhật danh sách tài khoản
-        listTaiKhoanDAO = taiKhoanDAO.selectAll();
-        showData((ArrayList<TaiKhoan>) listTaiKhoanDAO);
-
-
-
+    // Cập nhật danh sách tài khoản
+    listTaiKhoanDAO = taiKhoanDAO.selectAll();
+    showData((ArrayList<TaiKhoan>) listTaiKhoanDAO);
+} catch (NumberFormatException e) {
+    JOptionPane.showMessageDialog(this, "Mã tài khoản không hợp lệ");
+}
     }//GEN-LAST:event_btnXoaActionPerformed
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnLuu;

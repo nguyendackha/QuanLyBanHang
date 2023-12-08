@@ -6,7 +6,6 @@ import DAO.NhanVienDAO;
 import Entity.DanhMuc;
 import Entity.NhanVien;
 import Helper.Clock;
-import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -14,14 +13,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.DefaultListModel;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-/**
- *
- * @author ASUS
- */
+
 public class QLNhanVien extends javax.swing.JFrame {
 
     public String tenNV;
@@ -29,7 +26,7 @@ public class QLNhanVien extends javax.swing.JFrame {
     private javax.swing.JList<String> jListDanhMuc;
     // Các biến và đối tượng khác...
 
-    public QLNhanVien(String tenNV) {
+    public QLNhanVien(String TenNhanVien) {
         this.tenNV = tenNV;
         initComponents();
         setTitle("QL cửa hàng bán quần áo");
@@ -44,7 +41,7 @@ public class QLNhanVien extends javax.swing.JFrame {
 
     List<DanhMuc> danhMucList = danhMucDAO.selectAll();
     for (DanhMuc danhMuc : danhMucList) {
-        listModel.addElement(danhMuc.getTenSanPham());
+        listModel.addElement(danhMuc.getTenDanhMuc());
     }
 
     jListDanhMuc.setModel(listModel);

@@ -1,30 +1,30 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package Entity;
 
+import java.util.Date;
+
 /**
- *
+ * 
  * @author ASUS
  */
 public class NhanVien {
 
     private String MaNhanVien;
-    private int MaChucVu;
+    private int MaTk;
+    private String MaChucVu;
     private String TenNhanVien;
-    private String NgaySinh;
-    private String GioiTinh;
+    private Date NgaySinh;
+    private boolean GioiTinh;
     private String SDT;
     private String DiaChi;
     private String imageNV;
-    private ChucVu ChucVu;
+    private ChucVu ChucVu; // Assume that ChucVu is another class with at least a TenChucVu field
 
     public NhanVien() {
     }
 
-    public NhanVien(String MaNhanVien, int MaChucVu, String TenNhanVien, String NgaySinh, String GioiTinh, String SDT, String DiaChi, String imageNV, ChucVu ChucVu) {
+    public NhanVien(String MaNhanVien, String MaChucVu, String TenNhanVien, Date NgaySinh, boolean GioiTinh, String SDT, String DiaChi, String imageNV, ChucVu ChucVu) {
         this.MaNhanVien = MaNhanVien;
+        this.MaTk = MaTk;
         this.MaChucVu = MaChucVu;
         this.TenNhanVien = TenNhanVien;
         this.NgaySinh = NgaySinh;
@@ -35,8 +35,6 @@ public class NhanVien {
         this.ChucVu = ChucVu;
     }
 
-    
-
     public String getMaNhanVien() {
         return MaNhanVien;
     }
@@ -45,14 +43,21 @@ public class NhanVien {
         this.MaNhanVien = MaNhanVien;
     }
 
-    public int getMaChucVu() {
+    public int getMaTk() {
+        return MaTk;
+    }
+
+    public void setMaTk(int MaTk) {
+        this.MaTk = MaTk;
+    }
+
+    public String getMaChucVu() {
         return MaChucVu;
     }
 
-    public void setMaChucVu(int MaChucVu) {
+    public void setMaChucVu(String MaChucVu) {
         this.MaChucVu = MaChucVu;
     }
-
 
     public String getTenNhanVien() {
         return TenNhanVien;
@@ -62,19 +67,19 @@ public class NhanVien {
         this.TenNhanVien = TenNhanVien;
     }
 
-    public String getNgaySinh() {
+    public Date getNgaySinh() {
         return NgaySinh;
     }
 
-    public void setNgaySinh(String NgaySinh) {
+    public void setNgaySinh(Date NgaySinh) {
         this.NgaySinh = NgaySinh;
     }
 
-    public String getGioiTinh() {
+    public boolean getGioiTinh() {
         return GioiTinh;
     }
 
-    public void setGioiTinh(String GioiTinh) {
+    public void setGioiTinh(boolean GioiTinh) {
         this.GioiTinh = GioiTinh;
     }
 
@@ -109,9 +114,9 @@ public class NhanVien {
     public void setChucVu(ChucVu ChucVu) {
         this.ChucVu = ChucVu;
     }
-    public Object[] toDataRow() {
-        Object[] row = new Object[8]; // Số 8 là số cột trong bảng
 
+    public Object[] toDataRow() {
+        Object[] row = new Object[9]; // Số 9 là số cột trong bảng
         row[0] = getMaNhanVien();
         row[1] = getTenNhanVien();
         row[2] = getNgaySinh();
@@ -119,10 +124,16 @@ public class NhanVien {
         row[4] = getSDT();
         row[5] = getDiaChi();
         row[6] = getImageNV();
-        row[7] = getChucVu().getTenChucVu(); // Điều này giả định rằng bạn muốn hiển thị tên chức vụ
+
+        // Kiểm tra null trước khi truy cập ChucVu
+        if (getChucVu() != null) {
+            row[7] = getChucVu().getTenChucVu(); // Điều này giả định rằng bạn muốn hiển thị tên chức vụ
+        } else {
+            row[7] = ""; // hoặc một giá trị mặc định khác nếu ChucVu là null
+        }
+
+        row[8] = getMaTk(); // Thêm MaTk vào mảng
 
         return row;
     }
-
-    
 }

@@ -1,32 +1,31 @@
 package Entity;
 
 public class DanhMuc {
-    private int MaSanPham;
-    private String TenSanPham;
-    
-    public DanhMuc(int MaSanPham, String TenSanPham) {
-        this.MaSanPham = MaSanPham;
-        this.TenSanPham = TenSanPham;
+    private String maDanhMuc;
+    private String tenDanhMuc;
+
+    public DanhMuc(String maDanhMuc, String tenDanhMuc) {
+        this.maDanhMuc = maDanhMuc;
+        this.tenDanhMuc = tenDanhMuc;
     }
 
-    public int getMaSanPham() {
-        return MaSanPham;
+    public String getMaDanhMuc() {
+        return maDanhMuc;
     }
 
-    public void setMaSanPham(int MaSanPham) {
-        this.MaSanPham = MaSanPham;
+    public void setMaDanhMuc(String maDanhMuc) {
+        this.maDanhMuc = maDanhMuc;
     }
 
-    public String getTenSanPham() {
-        return TenSanPham;
+    public String getTenDanhMuc() {
+        return tenDanhMuc;
     }
 
-    public void setTenSanPham(String TenSanPham) {
-        this.TenSanPham = TenSanPham;
+    public void setTenDanhMuc(String tenDanhMuc) {
+        this.tenDanhMuc = tenDanhMuc;
     }
 
     public Object[] toDataRow() {
-        // Trả về một mảng Object chứa dữ liệu để hiển thị trong bảng
-        return new Object[]{getMaSanPham(), getTenSanPham()};
+        return new Object[]{getMaDanhMuc(), getTenDanhMuc()};
     }
 }

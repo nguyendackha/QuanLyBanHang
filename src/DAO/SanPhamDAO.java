@@ -3,56 +3,54 @@ package DAO;
 import Entity.SanPham;
 import Helper.XJdbc;
 
-import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SanPhamDAO extends ManagerDAO<SanPham, Integer> {
+public class SanPhamDAO extends ManagerDAO<SanPham, String> {
 
-    private final String INSERT_SQL = "INSERT INTO SanPham(MaLoaiSP, TenSanPham, DonVi, GiaTien, TrangThai, ImageSanPham, MaDanhMuc) VALUES(?,?,?,?,?,?,?)";
-    private final String UPDATE_SQL = "UPDATE SanPham SET MaLoaiSP=?, TenSanPham=?, DonVi=?, GiaTien=?, TrangThai=?, ImageSanPham=?, MaDanhMuc=? WHERE MaSanPham=?";
+    private final String INSERT_SQL = "INSERT INTO SanPham(MaSanPham, MaDanhMuc, TenSanPham, DonVi, GiaTien, TrangThai, ImageSanPham) VALUES(?,?,?,?,?,?,?)";
+    private final String UPDATE_SQL = "UPDATE SanPham SET MaDanhMuc=?, TenSanPham=?, DonVi=?, GiaTien=?, TrangThai=?, ImageSanPham=? WHERE MaSanPham=?";
     private final String DELETE_SQL = "DELETE FROM SanPham WHERE MaSanPham=?";
-    private final String SELECT_ALL_SQL = "SELECT * FROM SanPham";
+    private final String SELECT_ALL_SQL = "SELECT * FROM SanPham WHERE MaDanhMuc = ?";
     private final String SELECT_BY_ID_SQL = "SELECT * FROM SanPham WHERE MaSanPham=?";
     private final String TOP_5_SOLD_SQL = "SELECT TOP(5) SanPham.TenSanPham, COUNT(ChiTietHoaDon.SoLuong) AS SoLuongBan\n"
             + "FROM dbo.SanPham INNER JOIN dbo.ChiTietHoaDon ON dbo.SanPham.MaSanPham = dbo.ChiTietHoaDon.MaSanPham\n"
             + "INNER JOIN dbo.HoaDon ON dbo.ChiTietHoaDon.MaHoaDon = dbo.HoaDon.MaHoaDon\n"
             + "WHERE HoaDon.TrangThai = N'Đã thanh toán' GROUP BY TenSanPham ORDER BY SoLuongBan DESC";
-
+    
     @Override
     public void insert(SanPham entity) {
         XJdbc.executeUpdate(INSERT_SQL,
-                entity.getMaLoaiSP(),
+                entity.getMaSanPham(),
+                entity.getMaDanhMuc(),
                 entity.getTenSanPham(),
                 entity.getDonVi(),
                 entity.getGiaTien(),
                 entity.getTrangThai(),
-                entity.getImageSanPham(),
-                entity.getMaDanhMuc());
+                entity.getImageSanPham());
     }
 
     @Override
     public void update(SanPham entity) {
         XJdbc.executeUpdate(UPDATE_SQL,
-                entity.getMaLoaiSP(),
+                entity.getMaDanhMuc(),
                 entity.getTenSanPham(),
                 entity.getDonVi(),
                 entity.getGiaTien(),
                 entity.getTrangThai(),
                 entity.getImageSanPham(),
-                entity.getMaDanhMuc(),
                 entity.getMaSanPham());
     }
 
     @Override
-    public void delete(Integer id) {
+    public void delete(String id) {
         XJdbc.executeUpdate(DELETE_SQL, id);
     }
 
     @Override
-    public SanPham selectById(Integer id) {
+    public SanPham selectById(String id) {
         List<SanPham> list = this.selectBySQL(SELECT_BY_ID_SQL, id);
         return list.isEmpty() ? null : list.get(0);
     }
@@ -61,9 +59,11 @@ public class SanPhamDAO extends ManagerDAO<SanPham, Integer> {
     public List<SanPham> selectAll() {
         return this.selectBySQL(SELECT_ALL_SQL);
     }
+
     public List<SanPham> getAll() {
         return this.selectBySQL(SELECT_ALL_SQL);
     }
+
     public void add(SanPham entity) {
         this.insert(entity);
     }
@@ -91,14 +91,13 @@ public class SanPhamDAO extends ManagerDAO<SanPham, Integer> {
             ResultSet rs = XJdbc.executeQuery(sql, args);
             while (rs.next()) {
                 SanPham entity = new SanPham(
-                        rs.getInt("MaSanPham"),
-                        rs.getInt("MaLoaiSP"),
+                        rs.getString("MaSanPham"),
+                        rs.getString("MaDanhMuc"),
                         rs.getString("TenSanPham"),
-                        rs.getString("DonVi"),
+                        rs.getInt("DonVi"),
                         rs.getInt("GiaTien"),
                         rs.getString("TrangThai"),
-                        rs.getString("ImageSanPham"),
-                        rs.getInt("MaDanhMuc"));
+                        rs.getString("ImageSanPham"));
                 list.add(entity);
             }
         } catch (SQLException e) {

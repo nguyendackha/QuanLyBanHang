@@ -1,79 +1,73 @@
-    package Entity;
+package Entity;
 
 public class SanPham {
-    private int maSanPham;
-    private int maLoaiSP;
-    private String tenSanPham;
-    private String donVi;
-    private int giaTien;
-    private String trangThai;
+    private String MaSanPham;
+    private String TenSanPham;
+    private String MaDanhMuc;
+    private int DonVi;
+    private int GiaTien;
+    private String TrangThai;
     private String imageSanPham;
 
-    // Thêm thuộc tính mới cho mã danh mục
-    private int maDanhMuc;
-
-    // Constructors
     public SanPham() {
     }
 
-    public SanPham(int maSanPham, int maLoaiSP, String tenSanPham, String donVi, int giaTien, String trangThai, String imageSanPham, int maDanhMuc) {
-        this.maSanPham = maSanPham;
-        this.maLoaiSP = maLoaiSP;
-        this.tenSanPham = tenSanPham;
-        this.donVi = donVi;
-        this.giaTien = giaTien;
-        this.trangThai = trangThai;
+    public SanPham(String MaSanPham, String TenSanPham, String MaDanhMuc, int DonVi, int GiaTien, String TrangThai, String imageSanPham) {
+        this.MaSanPham = MaSanPham;
+        this.TenSanPham = TenSanPham;
+        this.MaDanhMuc = MaDanhMuc;
+        this.DonVi = DonVi;
+        this.GiaTien = GiaTien;
+        this.TrangThai = TrangThai;
         this.imageSanPham = imageSanPham;
-        this.maDanhMuc = maDanhMuc; 
     }
 
-    // Getter and Setter methods
-    public int getMaSanPham() {
-        return maSanPham;
+    public String getMaSanPham() {
+        return MaSanPham;
     }
 
-    public void setMaSanPham(int maSanPham) {
-        this.maSanPham = maSanPham;
-    }
-
-    public int getMaLoaiSP() {
-        return maLoaiSP;
-    }
-
-    public void setMaLoaiSP(int maLoaiSP) {
-        this.maLoaiSP = maLoaiSP;
+    public void setMaSanPham(String MaSanPham) {
+        this.MaSanPham = MaSanPham;
     }
 
     public String getTenSanPham() {
-        return tenSanPham;
+        return TenSanPham;
     }
 
-    public void setTenSanPham(String tenSanPham) {
-        this.tenSanPham = tenSanPham;
+    public void setTenSanPham(String TenSanPham) {
+        this.TenSanPham = TenSanPham;
     }
 
-    public String getDonVi() {
-        return donVi;
+    public String getMaDanhMuc() {
+        return MaDanhMuc;
     }
 
-    public void setDonVi(String donVi) {
-        this.donVi = donVi;
+    public void setMaDanhMuc(String MaDanhMuc) {
+        this.MaDanhMuc = MaDanhMuc;
+    }
+
+    public int getDonVi() {
+        return DonVi;
+    }
+
+    public void setDonVi(int DonVi) {
+        this.DonVi = DonVi;
     }
 
     public int getGiaTien() {
-        return giaTien;
+        return GiaTien;
     }
 
-    public void setGiaTien(int giaTien) {
-        this.giaTien = giaTien;
+    public void setGiaTien(int GiaTien) {
+        this.GiaTien = GiaTien;
     }
 
     public String getTrangThai() {
-        return trangThai;
+        return TrangThai;
     }
 
-    public void setTrangThai(String trangThai) {
-        this.trangThai = trangThai;
+    public void setTrangThai(String TrangThai) {
+        this.TrangThai = TrangThai;
     }
 
     public String getImageSanPham() {
@@ -84,25 +78,10 @@ public class SanPham {
         this.imageSanPham = imageSanPham;
     }
 
-    public int getMaDanhMuc() {
-        return maDanhMuc;
-    }
-
-    public void setMaDanhMuc(int maDanhMuc) {
-        this.maDanhMuc = maDanhMuc;
-    }
+    // Các phương thức getter và setter
 
     // Thêm phương thức toDataRow2()
     public Object[] toDataRow2() {
-        return new Object[]{getMaSanPham(), getMaLoaiSP(), getTenSanPham(), getDonVi(), getGiaTien(), getTrangThai(), getImageSanPham(), getMaDanhMuc()};
-    }
-
-    // Thêm phương thức getDanhMuc()
-    public DanhMuc getDanhMuc() {
-        // Thực hiện logic để trả về đối tượng DanhMuc tương ứng với mã danh mục
-        // Trong trường hợp này, bạn có thể trả về một đối tượng DanhMuc hoặc null nếu không tìm thấy
-        // Ví dụ:
-        // return danhMucService.findById(this.maDanhMuc);
-        return null; // Hoặc xử lý khác tùy thuộc vào yêu cầu của bạn
+        return new Object[]{getMaSanPham(), getTenSanPham(), getDonVi(), getGiaTien(), getTrangThai(), getImageSanPham(), getMaDanhMuc()};
     }
 }

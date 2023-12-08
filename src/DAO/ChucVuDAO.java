@@ -3,11 +3,10 @@ package DAO;
 import Entity.ChucVu;
 import Helper.XJdbc;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ChucVuDAO extends ManagerDAO<ChucVu, Integer> {
+public class ChucVuDAO extends ManagerDAO<ChucVu, String> {
 
     private final String INSERT_SQL = "INSERT INTO ChucVu(TenChucVu, Luong) VALUES(?, ?)";
     private final String UPDATE_SQL = "UPDATE ChucVu SET TenChucVu=?, Luong=? WHERE MaChucVu=?";
@@ -31,31 +30,29 @@ public class ChucVuDAO extends ManagerDAO<ChucVu, Integer> {
     }
 
     @Override
-    public void delete(Integer id) {
+    public void delete(String id) {
         XJdbc.executeUpdate(DELETE_SQL, id);
     }
 
     @Override
-    public ChucVu selectById(Integer id) {
+    public ChucVu selectById(String id) {
         List<ChucVu> list = this.selectBySQL(SELECT_BY_ID_SQL, id);
-        if (list.isEmpty()) {
-            return null;
-        }
-        return list.get(0);
+        return list.isEmpty() ? null : list.get(0);
     }
 
     @Override
     public List<ChucVu> selectAll() {
         return this.selectBySQL(SELECT_ALL_SQL);
     }
-    public String getTenChucVuById(int maChucVu) {
+ 
+   public String getTenChucVuById(String maChucVu) {
     String sql = "SELECT TenChucVu FROM ChucVu WHERE MaChucVu=?";
     try {
         ResultSet rs = XJdbc.executeQuery(sql, maChucVu);
         if (rs.next()) {
             return rs.getString("TenChucVu");
         }
-    } catch (SQLException e) {
+    } catch (Exception e) {
         throw new RuntimeException(e);
     }
     return null;
@@ -65,18 +62,18 @@ public class ChucVuDAO extends ManagerDAO<ChucVu, Integer> {
     protected List<ChucVu> selectBySQL(String sql, Object... args) {
         List<ChucVu> list = new ArrayList<>();
         try {
-            ResultSet rs = XJdbc.executeQuery(sql, args);
-            while (rs.next()) {
+            List<Object[]> results = (List<Object[]>) XJdbc.executeQuery(sql, args);
+            for (Object[] result : results) {
                 ChucVu entity = new ChucVu(
-                        rs.getInt("MaChucVu"),
-                        rs.getString("TenChucVu"),
-                        rs.getBigDecimal("Luong"));
+                        (String) result[0],
+                        (String) result[1],
+                        (int) result[2]);
                 list.add(entity);
             }
-            rs.getStatement().getConnection().close();
-            return list;
-        } catch (SQLException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
+
+        return list;
     }
 }
